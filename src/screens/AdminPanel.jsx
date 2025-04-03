@@ -20,7 +20,7 @@ const AdminPanel = ({ route }) => {
   //fetching events of specified club only, from database -- using filter() 
 
   const fetchEvents = async () => {
-    
+
     setRefreshing(true)
 
       try {
@@ -53,7 +53,7 @@ const AdminPanel = ({ route }) => {
   };
 
   const handleAddEvent = () => {
-    navigation.navigate('AddEvent'); // Navigate to Add Event screen
+    navigation.navigate('AddEvent' , {club}); // Navigate to Add Event screen
   };
 
   const handleEditEvent = (event) => {

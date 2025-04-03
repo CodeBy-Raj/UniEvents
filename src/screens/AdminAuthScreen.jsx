@@ -40,6 +40,7 @@ const AdminAuthScreen = ({ onAuthSuccess }) => {
     }, []);
 
     const checkCode = () => {
+        
         if (!code.trim()) {
             Alert.alert('Error', 'Please enter a code');
             return;
