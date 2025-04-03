@@ -10,11 +10,15 @@ const AdminPanel = ({ route }) => {
   const [events, setEvents] = useState([]);
   const navigation = useNavigation();
 
+  const [refreshing, setRefreshing] = useState(false)
+
   useEffect(() => {
       fetchEvents();
   }, []);
 
   const fetchEvents = async () => {
+    setRefreshing(true)
+
       try {
           const fetchedEvents = await getEvents(); // Fetch all events
           
@@ -22,24 +26,16 @@ const AdminPanel = ({ route }) => {
           setEvents(clubEvents);
       } catch (error) {
           console.error("Error fetching events:", error);
+      } finally {
+        setRefreshing(false)
       }
   };
 
-  // const [events, setEvents] = useState([]);
-  // const navigation = useNavigation();
-
-  // useEffect(() => {
-  //   fetchEvents();
-  // }, []);
-
-  // const fetchEvents = async () => {
-  //   try {
-  //     const fetchedEvents = await getEvents(); // Fetch events from Appwrite
-  //     setEvents(fetchedEvents);
-  //   } catch (error) {
-  //     console.error("Error fetching events:", error);
-  //   }
-  // };
+  const handleRefreshAdmin = async () => {
+    
+   await fetchEvents()
+   
+  };
 
   const handleDeleteEvent = async (eventId) => {
     try {
@@ -59,19 +55,27 @@ const AdminPanel = ({ route }) => {
   };
 
   return (
+
     <View style={styles.container}>
       <Text style={styles.headLine}> {club}'s Admin Panel</Text>
       <Button title="Add Event" onPress={handleAddEvent} />
+      {/* <Button title="Delete Event" onPress={handleDeleteEvent}/> */}
+
       <FlatList
         data={events}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.$id}
         renderItem={({ item }) => (
           <EventCard
             event={item}
             onEdit={() => handleEditEvent(item)}
-            onDelete={() => handleDeleteEvent(item.id)}
+            onDelete={() => handleDeleteEvent(item.$id)}
           />
+          
         )}
+        showsVerticalScrollIndicator={false}
+        refreshing={refreshing}
+        onRefresh={handleRefreshAdmin}
+
       />
     </View>
   );

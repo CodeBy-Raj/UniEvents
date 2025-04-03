@@ -12,11 +12,9 @@ const AddEventScreen = ({ navigation }) => {
   const [registrationLink, setRegistrationLink] = useState('');
   const [date, setDate] = useState('');
   const [location, setlocation] = useState('ABES');
-  const [id, setid] = useState('')
+  // const [id, setid] = useState('')
 
   const handleAddEvent = async () => {
-
-   
 
     if (!clubName || !title || !description || !registrationLink || !date) {
       Alert.alert('Error', 'Please fill in all fields');
