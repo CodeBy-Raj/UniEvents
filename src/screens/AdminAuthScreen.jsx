@@ -23,28 +23,7 @@ const AdminAuthScreen = ({ onAuthSuccess }) => {
 
     const navigation = useNavigation();
 
-    // const checkCode = () => {
-    //     if (Object.values(SECRET_CODES).includes(code)) {
-    //         onAuthSuccess(true); // Notify parent about successful authentication
-    //         navigation.navigate('AdminPanel'); // Navigate to Admin Panel
-    //     } else {
-    //         Alert.alert("Access Denied", "Incorrect code. Don't guess randomly");
-    //     }
-    // };
-
-    // const checkCode = () => {
-    //     const club = Object.keys(SECRET_CODES).find(
-    //         key => SECRET_CODES[key] === code
-    //     );
     
-    //     if (club) {
-    //         onAuthSuccess(true); // Notify parent about successful authentication
-    //         navigation.navigate('AdminPanel', { club }); // Pass the club name to AdminPanel
-    //     } else {
-    //         Alert.alert("Access Denied", "Incorrect code. Don't guess randomly");
-    //     }
-    // };
-
     useEffect(() => {
         
         const fetchClubs = async () => {

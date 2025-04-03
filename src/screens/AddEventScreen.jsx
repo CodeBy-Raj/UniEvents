@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { addEvent, createEvent } from '../services/appwrite'; // Import the function to create an event
-
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
 
 const AddEventScreen = ({ navigation }) => {
@@ -12,7 +12,25 @@ const AddEventScreen = ({ navigation }) => {
   const [registrationLink, setRegistrationLink] = useState('');
   const [date, setDate] = useState('');
   const [location, setlocation] = useState('ABES');
-  // const [id, setid] = useState('')
+ 
+
+
+  // Load club name when the screen loads
+  useEffect(() => {
+    const fetchClubName = async () => {
+      try {
+        const storedClubName = await AsyncStorage.getItem('clubName'); // Retrieve from storage
+        if (storedClubName) {
+          setClubName(storedClubName);
+        }
+      } catch (error) {
+        console.error('Error fetching club name:', error);
+      }
+    };
+
+    fetchClubName();
+  }, []);
+
 
   const handleAddEvent = async () => {
 
@@ -49,7 +67,7 @@ const AddEventScreen = ({ navigation }) => {
       <TextInput
         style={styles.input}
         value={clubName}
-        onChangeText={setClubName}
+        // onChangeText={clubName}
       />
 
       <Text style={styles.label}>Title</Text>

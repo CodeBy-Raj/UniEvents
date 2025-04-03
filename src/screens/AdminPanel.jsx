@@ -17,9 +17,10 @@ const AdminPanel = ({ route }) => {
       fetchEvents();
   }, []);
 
-  //fetching events of specified club only from database -- using filter() 
+  //fetching events of specified club only, from database -- using filter() 
 
   const fetchEvents = async () => {
+    
     setRefreshing(true)
 
       try {
@@ -27,6 +28,7 @@ const AdminPanel = ({ route }) => {
           
           const clubEvents = fetchedEvents.filter(event => event.clubName === club); // Filter by club
           setEvents(clubEvents);
+
       } catch (error) {
           console.error("Error fetching events:", error);
       } finally {
@@ -82,6 +84,7 @@ const AdminPanel = ({ route }) => {
             event={item}
             onEdit={() => handleEditEvent(item)}
             onDelete={() => handleDeleteEvent(item.$id)}
+            isAdmin={true}
           />
           
         )}
