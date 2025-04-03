@@ -38,7 +38,10 @@ const HomeScreen = () => {
           data={events}
           keyExtractor={item => item.id}
           renderItem={({ item }) => (
-            <EventCard event={item} />
+            <EventCard event={item}
+            onRegister={() => console.log('Register for:', item.title)}
+            onDetails={() => console.log('Details for:', item.title)}
+            />
           )}
           showsVerticalScrollIndicator={false}
         />

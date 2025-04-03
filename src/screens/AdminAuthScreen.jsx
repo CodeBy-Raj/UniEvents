@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity, Vibration } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Client,Databases } from 'appwrite';
@@ -7,15 +7,16 @@ import { Client,Databases } from 'appwrite';
 
 const client = new Client();
 client
-    .setEndpoint('https://YOUR_APPWRITE_ENDPOINT') // Your Appwrite endpoint
-    .setProject('YOUR_PROJECT_ID'); // Your project ID
+    .setEndpoint('https://cloud.appwrite.io/v1') // Your Appwrite endpoint
+    .setProject('67ed7ef30016220d4d3c'); // Your project ID
 
 const databases = new Databases(client);
-const databaseId = 'YOUR_DATABASE_ID'; // Replace with your database ID
-const clubsCollectionId = 'YOUR_CLUBS_COLLECTION_ID'; // Replace with your collection ID
+const databaseId = '67ed81c5001ae04ea89c'; // Replace with your database ID
+const clubsCollectionId = '67ed89ff002561ee763d'; // Replace with your collection ID
 
 
 const AdminAuthScreen = ({ onAuthSuccess }) => {
+
     const [code, setCode] = useState('');
 
     const [clubs, setClubs] = useState([]);
@@ -45,6 +46,7 @@ const AdminAuthScreen = ({ onAuthSuccess }) => {
     // };
 
     useEffect(() => {
+        
         const fetchClubs = async () => {
             try {
                 const response = await databases.listDocuments(databaseId, clubsCollectionId);

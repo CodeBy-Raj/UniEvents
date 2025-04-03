@@ -17,6 +17,7 @@ const AdminPanel = ({ route }) => {
   const fetchEvents = async () => {
       try {
           const fetchedEvents = await getEvents(); // Fetch all events
+          
           const clubEvents = fetchedEvents.filter(event => event.clubName === club); // Filter by club
           setEvents(clubEvents);
       } catch (error) {
