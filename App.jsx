@@ -22,6 +22,13 @@ const App = () => {
     setIsAdminAuthenticated(status);
   };
 
+  const MainStack = () => (
+    <Stack.Navigator>
+      <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="EventDetails" component={EventDetailsScreen} options={{ headerShown: false }} />
+    </Stack.Navigator>
+  );
+
   const AdminStack = () => (
     <Stack.Navigator>
       <Stack.Screen name="AdminAuth" options={{ headerShown: false }}>
@@ -76,12 +83,14 @@ const App = () => {
             } else if (route.name === 'Admin') {
               iconName = 'settings-outline';
             } else if (route.name === 'StudentPanel') {
-              iconName = 'person-circle-outline';
+              iconName = 'person-circle';
             }
             return <Ionicons name={iconName} size={size} color={color} />;
           },
           tabBarActiveTintColor: '#f9eed0',
           tabBarInactiveTintColor: '#cccccc',
+         
+
           tabBarLabelStyle: {
             fontSize: 15,
             fontWeight: '600',
@@ -89,13 +98,13 @@ const App = () => {
           tabBarStyle: {
             height: 60,
             backgroundColor: '#3a3546',
-            borderTopRightRadius: 15,
-            borderTopLeftRadius: 15,
+            // borderTopRightRadius: 15,
+            // borderTopLeftRadius: 15,
           },
         })}>
         <Tab.Screen
           name="Events"
-          component={HomeScreen}
+          component={MainStack}
           options={{
             headerShown: false,
           }}

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Button, FlatList, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getEvents, deleteEvent } from '../services/appwrite'; // Import functions to interact with Appwrite
 import EventCard from '../components/EventCard';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const AdminPanel = ({ route }) => {
@@ -15,6 +16,8 @@ const AdminPanel = ({ route }) => {
   useEffect(() => {
       fetchEvents();
   }, []);
+
+  //fetching events of specified club only from database -- using filter() 
 
   const fetchEvents = async () => {
     setRefreshing(true)
@@ -31,6 +34,7 @@ const AdminPanel = ({ route }) => {
       }
   };
 
+  //refresh loading function
   const handleRefreshAdmin = async () => {
     
    await fetchEvents()
@@ -55,11 +59,20 @@ const AdminPanel = ({ route }) => {
   };
 
   return (
-
+<SafeAreaView style={styles.safeArea}>
     <View style={styles.container}>
+
+      <View style={styles.headLineContainer}>
+    <View style={styles.headLineDesign}>
+
       <Text style={styles.headLine}> {club}'s Admin Panel</Text>
-      <Button title="Add Event" onPress={handleAddEvent} />
-      {/* <Button title="Delete Event" onPress={handleDeleteEvent}/> */}
+      </View>
+    </View>
+      
+
+      <Button  title="Add Event" onPress={handleAddEvent} />
+      
+      <View style={styles.cards}>
 
       <FlatList
         data={events}
@@ -77,23 +90,73 @@ const AdminPanel = ({ route }) => {
         onRefresh={handleRefreshAdmin}
 
       />
+      </View>
+
     </View>
+
+</SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#060318"
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#060318',
     padding: 20,
+    gap:70,
+
   },
+  headLineContainer:{
+    justifyContent:'center',
+    
+  },
+
+  headLineDesign: {
+    // padding: 5, // Add padding to give space for the shadow
+    margin: 10, // Add margin to separate it from other elements
+    shadowColor: '#ffffff',
+    shadowOpacity: 0.5,
+    shadowOffset: {
+      height: 2,
+      width: 2,
+    },
+    shadowRadius: 5,
+    elevation: 35, // For Android shadow
+    // backgroundColor: '#1e1e1e', // Add a subtle background color for better visibility
+    borderRadius: 20, // Add border radius for smoother shadow edges
+  },
+
   headLine: {
     fontSize: 22,
     color: '#ffffff',
-    marginBottom: 20,
+   
   },
+
+  cards:{
+
+    flex:1,
+    width:'90%',
+    minHeight:150,
+    alignSelf:'center',
+    backgroundColor:'#1e1e1e',
+    padding:10,
+    borderRadius: 15,
+    
+    shadowColor: '#ffffff',
+    shadowOffset: { width: 4, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 8, 
+
+  },
+
+  
 });
 
 export default AdminPanel;

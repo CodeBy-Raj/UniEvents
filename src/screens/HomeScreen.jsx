@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, ActivityIndicator, Text } from 'react-native';
+import { View, FlatList, StyleSheet, ActivityIndicator, Text, Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import EventCard from '../components/EventCard';
 import { getEvents } from '../services/appwrite';
+import { useNavigation } from '@react-navigation/native';
+import EventDetailsScreen from './EventDetailsScreen';
 
 const HomeScreen = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const navigation = useNavigation();
 
   const fetchEvents = async () => {
     try {
@@ -21,16 +25,36 @@ const HomeScreen = () => {
     }
   };
 
-  
+  //handling register button
 
+  const handleRegister = (event)=>{
+    if (!event.registerLink) {
+      Alert.alert("Wait", "Registration Not Started");
+      return;
+    }
+    Linking.openURL(event.registerLink)
+    .catch(() => Alert.alert("Oops !","Failed to open "))
+  }
+
+  //handling detail button on homescreen
+
+  const handleDetails =(event) =>{
+      navigation.navigate('EventDetails',{event})
+  }
+
+  
+//Main screen header
   const Header = ()=>{
     return(
       <View style={styles.headerContainer}>
-        <Text style={styles.headerTxt}>Upcoming Events</Text>
+        <View style={styles.shadowWrapper}>
+          <Text style={styles.headerTxt}>Upcoming Events</Text>
+        </View>
       </View>
     );
   }
 
+  //handling refresh on load button slider
   const handleRefresh = async () => {
     setRefreshing(true);
     await fetchEvents();
@@ -57,9 +81,10 @@ const HomeScreen = () => {
           data={events}
           keyExtractor={item => item.$id}
           renderItem={({ item }) => (
+
             <EventCard event={item}
-            onRegister={() => console.log('Register for:', item.title)}
-            onDetails={() => console.log('Details for:', item.title)}
+            onRegister={() => handleRegister(item)}
+            onDetails={() => handleDetails(item)}
             />
           )}
           ListHeaderComponent={Header}
@@ -77,19 +102,31 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#060318"
   },
+
   container: {
+
     flex: 1,
     padding: 10,
     backgroundColor: '#060318',
+
   },
 
-  headerContainer:{
-    flex:1,
-    alignItems:'center',
-    justifyContent:'center',
-    height:30,
-    
+ headerContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 40,
   },
+  shadowWrapper: {
+    shadowColor: '#ffffff',
+    shadowOpacity: 0.25,
+    shadowOffset: {
+      height: 2,
+      width: 2,
+    },
+    shadowRadius: 4,
+    elevation: 10, // For Android shadow
+  },
+
   headerTxt:{
 
     fontSize:18,
