@@ -14,7 +14,7 @@ const EventDetailsScreen = ({ route }) => {
       <View style={styles.card}>
         <Text style={styles.title}>{event.title}</Text>
         <Text style={styles.clubName}>
-          <Ionicons name="people-outline" size={18} color="#fff" />  {event.clubName}
+          <Ionicons name="people-outline" size={18} color="#fff" /> Organised By: {event.clubName}
         </Text>
 
         <View style={styles.row}>

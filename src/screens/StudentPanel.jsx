@@ -6,7 +6,7 @@ export default function StudentPanel() {
   return (
     <View style={styles.container}>
       <LottieView
-        source={require('../assests/animations/soon .json')}
+        source={require('../assests/animations/soon.json')}
         autoPlay
         loop
         speed={2}

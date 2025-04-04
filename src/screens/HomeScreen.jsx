@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import EventCard from '../components/EventCard';
 import { getEvents } from '../services/appwrite';
 import { useNavigation } from '@react-navigation/native';
-import EventDetailsScreen from './EventDetailsScreen';
 import LottieView from 'lottie-react-native';
 
 

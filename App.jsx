@@ -77,13 +77,13 @@ const App = () => {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
-            let iconName = 'help-outline'; // Default icon
+            let iconName = 'help'; // Default icon
             if (route.name === 'Events') {
               iconName = 'list-outline';
             } else if (route.name === 'Admin') {
-              iconName = 'settings-outline';
-            } else if (route.name === 'StudentPanel') {
-              iconName = 'person-circle';
+              iconName = 'person-outline';
+            } else if (route.name === 'Student') {
+              iconName = 'walk-outline';
             }
             return <Ionicons name={iconName} size={size} color={color} />;
           },
@@ -98,8 +98,7 @@ const App = () => {
           tabBarStyle: {
             height: 60,
             backgroundColor: '#3a3546',
-            // borderTopRightRadius: 15,
-            // borderTopLeftRadius: 15,
+           
           },
         })}>
         <Tab.Screen

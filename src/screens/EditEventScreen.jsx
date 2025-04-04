@@ -7,19 +7,6 @@ const EditEventScreen = ({ route, navigation }) => {
   const { eventId } = route.params; // Get the event ID from the route parameters
   const [eventData, setEventData] = useState(null);
 
-  // useEffect(() => {
-  //   const fetchEventData = async () => {
-  //     try {
-  //       const data = await getEventById(eventId); // Fetch event data by ID
-  //       setEventData(data);
-  //     } catch (error) {
-  //       Alert.alert('Error', 'Failed to fetch event data');
-  //     }
-  //   };
-
-  //   fetchEventData();
-  // }, [eventId]);
-
   useEffect(() => {
     if (!eventId) {
         Alert.alert('Error', 'Event ID is missing');

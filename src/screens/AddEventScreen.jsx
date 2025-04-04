@@ -44,8 +44,8 @@ const AddEventScreen = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      
-      <View style={styles.container}>
+      <ScrollView>
+         <View style={styles.container}>
         <Text style={styles.label}>Club Name (Already Fetched)</Text>
         <TextInput style={styles.input} value={clubName} />
 
@@ -88,6 +88,8 @@ const AddEventScreen = ({navigation, route}) => {
         </TouchableOpacity>
        
       </View>
+      </ScrollView>
+     
     </SafeAreaView>
   );
 };
