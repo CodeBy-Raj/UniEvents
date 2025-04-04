@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity, Vibration } from 'react-native';
+import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity, Vibration, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Client,Databases } from 'appwrite';
 
@@ -57,7 +57,8 @@ const AdminAuthScreen = ({ onAuthSuccess }) => {
     };
 
     const creditMsg = () => {
-        Vibration.vibrate(100);
+        Vibration.vibrate(200);
+        Linking.openURL('https://linktr.ee/codebyRaj')
     };
 
     return (
@@ -76,6 +77,7 @@ const AdminAuthScreen = ({ onAuthSuccess }) => {
             >
                 <Text style={styles.submitTxt}>Submit</Text>
             </TouchableOpacity>
+{/* credit section */}
             <TouchableOpacity
                 style={styles.credit}
                 onPress={creditMsg} 

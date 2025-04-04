@@ -5,6 +5,9 @@ import EventCard from '../components/EventCard';
 import { getEvents } from '../services/appwrite';
 import { useNavigation } from '@react-navigation/native';
 import EventDetailsScreen from './EventDetailsScreen';
+import LottieView from 'lottie-react-native';
+
+
 
 const HomeScreen = () => {
   const [events, setEvents] = useState([]);
@@ -28,11 +31,12 @@ const HomeScreen = () => {
   //handling register button
 
   const handleRegister = (event)=>{
-    if (!event.registerLink) {
+
+    if (!event.registrationLink) {
       Alert.alert("Wait", "Registration Not Started");
       return;
     }
-    Linking.openURL(event.registerLink)
+    Linking.openURL(event.registrationLink)
     .catch(() => Alert.alert("Oops !","Failed to open "))
   }
 
@@ -91,6 +95,22 @@ const HomeScreen = () => {
           showsVerticalScrollIndicator={false}
           refreshing={refreshing}
           onRefresh={handleRefresh}
+
+          //when no events in database then this animations ....
+
+          ListEmptyComponent={() => (
+            <View style={styles.emptyContainer}>
+              <LottieView
+                source={require('../assests/animations/empty.json')}
+                autoPlay
+                loop
+                style={{ width: 200, height: 200 }}
+              />
+              <Text style={styles.emptyText}>😕 No Upcoming Events</Text>
+              <Text style={styles.emptySubText}>Stay tuned, something exciting is coming!</Text>
+            </View>
+          )}
+
         />
       </View>
     </SafeAreaView>
@@ -133,6 +153,26 @@ const styles = StyleSheet.create({
     fontWeight:'bold',
     color:'#f9eed0',
     
+  },
+  //empty list component handling style...no data found
+
+  emptyContainer: {
+    marginTop: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  
+  emptyText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#f9eed0',
+    marginTop: 10,
+  },
+  
+  emptySubText: {
+    fontSize: 14,
+    color: '#aaa',
+    marginTop: 4,
   },
 
  });

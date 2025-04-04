@@ -2,12 +2,24 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 const EventCard = ({ event, onRegister, onDetails ,  onEdit, onDelete, isAdmin = false }) => {
+
+
   return (
     <View style={styles.card}>
+
+      <View style={styles.titleContainer}>
       <Text style={styles.title}>{event.title}</Text>
+      </View>
+
+      <View style={styles.miniContent}>
+
       <Text style={styles.clubName}>by {event.clubName}</Text>
+      <Text style={styles.feeTxt}>₹ {event.fee}/-</Text>
+
+      </View>
       <Text style={styles.date}>Date: {event.date}</Text>
-      <Text style={styles.description}>{event.description}</Text>
+      
+      <Text style={styles.description}>Location: {event.location}</Text>
 
       <View style={styles.buttonContainer}>
         {isAdmin ? (
@@ -31,14 +43,7 @@ const EventCard = ({ event, onRegister, onDetails ,  onEdit, onDelete, isAdmin =
         )}
       </View>
 
-      {/* <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.registerButton} onPress={onRegister}>
-          <Text style={styles.buttonText}>Register</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.detailsButton} onPress={onDetails}>
-          <Text style={styles.buttonText}>Details</Text>
-        </TouchableOpacity>
-      </View> */}
+      
     </View>
   );
 };
@@ -51,15 +56,33 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 19,
   },
+  titleContainer:{
+    alignItems:'center',
+    marginBottom:10,
+  },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#fdfcfb',
   },
+  miniContent:{
+    flexDirection:'row',
+    justifyContent:'space-evenly',
+    alignItems:'center',
+  },
   clubName: {
     color: '#9e9ea7',
     fontSize: 17,
     fontWeight: 'bold',
+  },
+  feeTxt:{
+    color:'#000000',
+    fontSize:16,
+    fontWeight:'bold',
+    // backgroundColor: price == 0 ? 'green' : 'white' ,
+    backgroundColor: '#FBD28B',
+    borderRadius:20,
+    padding:10,
   },
   date: {
     color: '#cccccc',
@@ -67,7 +90,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   description: {
-    fontSize: 19,
+    fontSize: 14,
     fontWeight: '600',
     color: '#ecebf0',
   },
