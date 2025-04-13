@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import EventForm from '../components/EventForm';
-import { getEventById, updateEvent } from '../services/appwrite';
+import { getEventById, editEvent } from '../services/appwrite';
 
 const EditEventScreen = ({ route, navigation }) => {
-  const { eventId } = route.params; // Get the event ID from the route parameters
+  const { event:eventId } = route.params ; // Get the event ID from the route parameters
   const [eventData, setEventData] = useState(null);
 
   useEffect(() => {
+    // console.log('Route params :', route.params);
+    
     if (!eventId) {
         Alert.alert('Error', 'Event ID is missing');
         navigation.goBack(); // Navigate back if eventId is not provided
@@ -17,8 +19,12 @@ const EditEventScreen = ({ route, navigation }) => {
     const fetchEventData = async () => {
         try {
             const data = await getEventById(eventId); // Fetch event data by ID
+            // console.log('fetched event data:', data);
+            
             setEventData(data);
         } catch (error) {
+          // console.log('fetche event error', error);
+          
             Alert.alert('Error', 'Failed to fetch event data');
         }
     };
@@ -28,10 +34,14 @@ const EditEventScreen = ({ route, navigation }) => {
 
   const handleUpdateEvent = async (updatedData) => {
     try {
-      await updateEvent(eventId, updatedData); // Update the event with new data
+      // console.log('updating event with data: ', updatedData);
+      
+      await editEvent(eventId, updatedData); // Update the event with new data
       Alert.alert('Success', 'Event updated successfully');
       navigation.goBack(); // Navigate back to the previous screen
     } catch (error) {
+      // console.log('update event errro', error);
+      
       Alert.alert('Error', 'Failed to update event');
     }
   };

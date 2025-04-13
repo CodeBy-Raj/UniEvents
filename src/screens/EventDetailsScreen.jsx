@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
@@ -50,7 +50,7 @@ const EventDetailsScreen = ({ route }) => {
           )}
         </View>
       </View>
-
+          <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.descriptionContainer}>
 
         <View style={styles.descTitleContainer}>
@@ -62,6 +62,7 @@ const EventDetailsScreen = ({ route }) => {
         </View>
 
       </View>
+      </ScrollView>
     </LinearGradient>
   );
 };

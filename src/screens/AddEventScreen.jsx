@@ -54,9 +54,10 @@ const AddEventScreen = ({navigation, route}) => {
 
         <Text style={styles.label}>📝 Description</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, {height:150}]}
           value={description}
           onChangeText={setDescription}
+          multiline={true}
         />
 
         <Text style={styles.label}>🔗 Registration/Form Link</Text>
@@ -109,15 +110,18 @@ const styles = StyleSheet.create({
   label: {
     color: '#ffffff',
     marginBottom: 5,
+    fontSize:15,
+    fontWeight:'bold'
   },
 
   input: {
-    height: 40,
+    height: 45,
     borderColor: '#ffffff',
-    borderWidth: 1,
+    borderWidth: 2,
     marginBottom: 15,
     paddingHorizontal: 10,
     color: '#ffffff',
+    borderRadius:12,
   },
   
     btnStyle:{

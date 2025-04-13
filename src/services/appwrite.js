@@ -4,8 +4,8 @@ import { ID } from 'appwrite';
 const client = new Client();
 
 client
-    .setEndpoint('https://cloud.appwrite.io/v1') // Your Appwrite endpoint
-    .setProject('67ed7ef30016220d4d3c'); // Your project ID
+    .setEndpoint('https://cloud.appwrite.io/v1') //  Appwrite endpoint
+    .setProject('67ed7ef30016220d4d3c'); // project ID
 
 const databases = new Databases(client);
 
@@ -13,27 +13,12 @@ const databases = new Databases(client);
 const databaseId = '67ed81c5001ae04ea89c'; // Replace with your database ID
 const eventsCollectionId = '67ed81e2002747f6fe6a'; // Replace with your events collection ID
 
-
-
-// Function to add a new event
-// export const addEvent = async (eventData) => {
-//     try {
-//         const response = await databases.createDocument(databaseId, eventsCollectionId, eventData.id, eventData);
-//         return response;
-//     } catch (error) {
-//         console.error('Error adding event:', error);
-//         throw error;
-//     }
-// };
-
-
-
 export const addEvent = async (eventData) => {
     try {
         const response = await databases.createDocument(
             databaseId,
             eventsCollectionId,
-            // eventData.id,
+            
             ID.unique(), // Generates a unique ID
             eventData
         );

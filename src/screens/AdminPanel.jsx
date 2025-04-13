@@ -18,8 +18,8 @@ const AdminPanel = ({route}) => {
   }, []);
 
   //fetching events of specified club only, from database -- using filter()
-
   const fetchEvents = async () => {
+
     setRefreshing(true);
 
     try {
@@ -80,7 +80,7 @@ const AdminPanel = ({route}) => {
             renderItem={({item}) => (
               <EventCard
                 event={item}
-                onEdit={() => handleEditEvent(item)}
+                onEdit={() => handleEditEvent(item.$id)}
                 onDelete={() => handleDeleteEvent(item.$id)}
                 isAdmin={true}
               />
