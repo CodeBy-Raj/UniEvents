@@ -57,6 +57,7 @@ const EventForm = ({ onSubmit, initialData }) => {
         style={styles.input}
         value={date}
         onChangeText={setDate}
+        
       />
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>

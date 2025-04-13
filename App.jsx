@@ -10,6 +10,7 @@ import AddEventScreen from './src/screens/AddEventScreen';
 import EditEventScreen from './src/screens/EditEventScreen';
 import EventDetailsScreen from './src/screens/EventDetailsScreen';
 import StudentPanel from './src/screens/StudentPanel';
+import RegisterScreen from './src/screens/RegisterScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -26,6 +27,7 @@ const App = () => {
     <Stack.Navigator>
       <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="EventDetails" component={EventDetailsScreen} options={{ headerShown: false }} />
+      <Stack.Screen name='RegisterScreen' component={RegisterScreen} options={{headerShown:false}}/>
     </Stack.Navigator>
   );
 
