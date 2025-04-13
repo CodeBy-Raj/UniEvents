@@ -1,5 +1,6 @@
-import { Client, Databases } from 'appwrite';
+import { Client, Databases, Query } from 'appwrite';
 import { ID } from 'appwrite';
+// import { Alert } from 'react-native';
 
 const client = new Client();
 
@@ -17,6 +18,19 @@ const regCollectionId = '67fc0c2200043020d710'; //registration collection id of 
 //function to add registrations to databases ...
 export const regEvent = async (eventData) => {
     try{
+        //checking for duplicate entries 
+        const existing = await databases.listDocuments(
+            databaseId,
+            regCollectionId,
+            [Query.equal('email', eventData.email), 
+                Query.equal('title', eventData.title)
+            ]
+        );
+        if(existing.total > 0){
+           throw new Error("Duplicate_Registration");
+        };
+
+        //if not duplicate, add to db
         const response = await databases.createDocument(
             databaseId,
             regCollectionId,

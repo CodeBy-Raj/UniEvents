@@ -11,6 +11,10 @@ const RegisterScreen = ({route,navigation}) => {
     const [phone, setPhone]  = useState('');
 
 const handleSubmit = async()=> {
+    if(!email || !phone || !name){
+        Alert.alert('Mandatory !!','Please fill all details');
+        return;
+    }
     const eventData ={
         title,
         clubName,
@@ -19,13 +23,28 @@ const handleSubmit = async()=> {
         name
     }
     try{
+ 
         await regEvent(eventData);
         Alert.alert('Success !!!','Regisration success');
         navigation.goBack();
-    }catch(error){
+    }
+    catch(error){
+        
         console.log('registation error :', error);
         
-        Alert.alert('Error', 'Registraion failed to submit')
+        if(error.message === "Duplicate_Registration"){
+            Alert.alert('Already Registered', 'Duplicate Entries Not Allowed');
+        }
+        else if(error.message.includes('Attribute "email" has invalid format')){
+            Alert.alert('Invalid Email Format' , "Please enter valid email address");
+        }
+        else if(error.message.includes('phone')){
+            Alert.alert('Invalid Phone Number', 'Kripya, Enter correct Phone number');
+        }
+        else{
+
+            Alert.alert('Error', 'Registraion failed to submit')
+        }
     }
 }
 
