@@ -29,18 +29,22 @@ const HomeScreen = () => {
 
   //handling register button
 
-  const handleRegister = (event)=>{
+  // const handleRegister = (regLink)=>{
 
-    if (!event.registrationLink) {
-      Alert.alert("Wait", "Registration Not Started");
-      return;
-    }
-    Linking.openURL(event.registrationLink)
-    .catch(() => Alert.alert("Oops !","Failed to open "))
+  //   if (!regLink) {
+  //     Alert.alert("Wait", "Registration Not Started");
+  //     return;
+  //   }
+  //   Linking.openURL(regLink)
+  //   .catch(() => Alert.alert("Oops !","Failed to open "))
+  // }
+
+  const handleRegister = (event) => {
+    navigation.navigate('RegisterScreen', {clubName: event.clubName , title:event.title});
   }
 
+  
   //handling detail button on homescreen
-
   const handleDetails =(event) =>{
       navigation.navigate('EventDetails',{event})
   }

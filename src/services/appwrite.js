@@ -12,7 +12,25 @@ const databases = new Databases(client);
 // Database and collection details
 const databaseId = '67ed81c5001ae04ea89c'; // Replace with your database ID
 const eventsCollectionId = '67ed81e2002747f6fe6a'; // Replace with your events collection ID
+const regCollectionId = '67fc0c2200043020d710'; //registration collection id of appwrite
 
+//function to add registrations to databases ...
+export const regEvent = async (eventData) => {
+    try{
+        const response = await databases.createDocument(
+            databaseId,
+            regCollectionId,
+            ID.unique(),
+            eventData
+        );
+        return response;
+    } catch(error){
+        console.log('Error in registring', error); //debugging
+        throw error;
+        
+    }
+};
+//function to add event to database
 export const addEvent = async (eventData) => {
     try {
         const response = await databases.createDocument(
@@ -24,7 +42,7 @@ export const addEvent = async (eventData) => {
         );
         return response;
     } catch (error) {
-        console.error('Error adding event:', error);
+        // console.error('Error adding event:', error); //debugging
         throw error;
     }
 };

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity, ScrollView} from 'react-native';
+import {View, Text, TextInput, StyleSheet, Alert, TouchableOpacity, ScrollView} from 'react-native';
 import {addEvent, createEvent} from '../services/appwrite'; // Import the function to create an event
 import {SafeAreaView} from 'react-native-safe-area-context';
 
