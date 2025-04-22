@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity, Vibration, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Client,Databases } from 'appwrite';
+import Toast from 'react-native-toast-message';
 
 
 
@@ -52,13 +53,23 @@ const AdminAuthScreen = ({ onAuthSuccess }) => {
             onAuthSuccess(true); // Notify parent about successful authentication
             navigation.navigate('AdminPanel', { club: club.clubName }); // Pass the club name to AdminPanel
         } else {
-            Alert.alert('Access Denied', "Incorrect code. Don't guess randomly");
+            Alert.alert('Access Denied', "Incorrect code !!");
         }
     };
 
     const creditMsg = () => {
+        Toast.show({
+            type:'success',
+            text1:'HEY !! Wait....',
+            text2:'Loading.....',
+            visibilityTime:3000,
+            
+        })
+        setTimeout(() => {
+            Linking.openURL('https://linktr.ee/codebyRaj')
+        }, 1500);
         Vibration.vibrate(200);
-        Linking.openURL('https://linktr.ee/codebyRaj')
+        
     };
 
     return (

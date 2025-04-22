@@ -24,7 +24,7 @@ export const regEvent = async (eventData) => {
             regCollectionId,
             [Query.equal('email', eventData.email), 
                 Query.equal('title', eventData.title)
-            ]
+            ]   
         );
         if(existing.total > 0){
            throw new Error("Duplicate_Registration");

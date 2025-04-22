@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, TextInput, StyleSheet, Alert, TouchableOpacity, ScrollView} from 'react-native';
 import {addEvent, createEvent} from '../services/appwrite'; // Import the function to create an event
 import {SafeAreaView} from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
 const AddEventScreen = ({navigation, route}) => {
   const {club} = route.params; //getting clubName from adminPanel with help of route
@@ -13,12 +14,19 @@ const AddEventScreen = ({navigation, route}) => {
   const [date, setDate] = useState('');
   const [location, setlocation] = useState('ABES');
   const [fee, setFee] = useState();
+  const [time, setTime] = useState('');
+  const [regDeadline, setRegDeadline] = useState('');
 
 
 
   const handleAddEvent = async () => {
-    if ( !title || !description || !registrationLink || !date || !fee) {
-      Alert.alert('Error', 'Please fill in all fields');
+    if ( !title || !description || !date || !fee ||!time ||!regDeadline) {
+      Toast.show({
+        type:'error',
+        text1:'Error !!',
+        text2:'Please fill all Fields'
+      })
+      // Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
@@ -31,6 +39,8 @@ const AddEventScreen = ({navigation, route}) => {
       date,
       location,
       fee: parseInt(fee),
+      time,
+      regDeadline
     };
 
     try {
@@ -60,15 +70,22 @@ const AddEventScreen = ({navigation, route}) => {
           multiline={true}
         />
 
-        <Text style={styles.label}>🔗 Registration/Form Link</Text>
+        <Text style={styles.label}>🔗 Registration/Form Link (If want in-App Registration then No Need, else will redirect to Your Given Link)</Text>
         <TextInput
           style={styles.input}
           value={registrationLink}
           onChangeText={setRegistrationLink}
         />
 
-        <Text style={styles.label}>📅 Date</Text>
+        <Text style={styles.label}>📅Event Date</Text>
         <TextInput style={styles.input} value={date} onChangeText={setDate} />
+
+        <Text style={styles.label}>⌛ Time</Text>
+        <TextInput style={styles.input} value={time} onChangeText={setTime} />
+
+        <Text style={styles.label}>🙀 Registration Deadline</Text>
+        <TextInput style={styles.input} value={regDeadline} onChangeText={setRegDeadline} />
+
 
         <Text style={styles.label}>📌 Location </Text>
         <TextInput

@@ -30,7 +30,7 @@ const handleSubmit = async()=> {
     }
     catch(error){
         
-        console.log('registation error :', error);
+        // console.log('registation error :', error); //debug
         
         if(error.message === "Duplicate_Registration"){
             Alert.alert('Already Registered', 'Duplicate Entries Not Allowed');
@@ -43,7 +43,7 @@ const handleSubmit = async()=> {
         }
         else{
 
-            Alert.alert('Error', 'Registraion failed to submit')
+            Alert.alert('Oops !!!', 'Registraion failed to submit')
         }
     }
 }

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, ActivityIndicator, Text, Linking, Alert } from 'react-native';
+import { View, FlatList, StyleSheet, ActivityIndicator, Text, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import EventCard from '../components/EventCard';
 import { getEvents } from '../services/appwrite';
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
+import Toast from 'react-native-toast-message';
 
 
 
@@ -39,8 +40,26 @@ const HomeScreen = () => {
   //   .catch(() => Alert.alert("Oops !","Failed to open "))
   // }
 
+
+  //handling registration screen......
+
   const handleRegister = (event) => {
-    navigation.navigate('RegisterScreen', {clubName: event.clubName , title:event.title});
+    const link = event.registrationLink;
+
+    if(link){
+      Toast.show({
+        type:'info',
+        text1:'Opening',
+        text2:'Redirecting to Browser.....',
+        visibilityTime:3000
+      });
+      setTimeout(() => {
+        Linking.openURL(link);
+      }, 1500);
+    }
+    else{
+      navigation.navigate('RegisterScreen', {clubName: event.clubName , title:event.title});
+    }
   }
 
   

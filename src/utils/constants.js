@@ -6,7 +6,7 @@ const SECRET_CODES = {
 };
 
 const EVENT_FIELDS = {
-    ID: 'id',
+
     CLUB_NAME: 'clubName',
     TITLE: 'title',
     DESCRIPTION: 'description',

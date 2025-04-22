@@ -9,12 +9,15 @@ import AdminPanel from './src/screens/AdminPanel';
 import AddEventScreen from './src/screens/AddEventScreen';
 import EditEventScreen from './src/screens/EditEventScreen';
 import EventDetailsScreen from './src/screens/EventDetailsScreen';
-import StudentPanel from './src/screens/StudentPanel';
 import RegisterScreen from './src/screens/RegisterScreen';
+import Toast from 'react-native-toast-message';
+import StudentDashboard from './src/screens/StudentDashboard';
 
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+
+
 
 const App = () => {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
@@ -74,6 +77,18 @@ const App = () => {
     </Stack.Navigator>
   );
 
+  //student dashboard
+
+  const StudentStack = () => (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="StudentDashboard"
+        component={StudentDashboard}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  );
+
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -119,13 +134,15 @@ const App = () => {
         />
         <Tab.Screen
           name="Student"
-          component={StudentPanel}
+          component={StudentStack}
           options={{
             headerShown: false,
           }}
         />
       </Tab.Navigator>
+      <Toast/>
     </NavigationContainer>
+    
   );
 };
 

@@ -39,7 +39,7 @@ const EventDetailsScreen = ({ route }) => {
   {/* Registration Deadline */}
   <View style={styles.row}>
     <MaterialIcons name="schedule" size={18} color="#fff" />
-    <Text style={styles.date}> Reg Deadline: {event.deadline || 'N/A'}</Text>
+    <Text style={styles.date}> Reg Deadline: {event.regDeadline || 'N/A'}</Text>
   </View>
 
         <View style={styles.feeContainer}>
@@ -124,8 +124,6 @@ const styles = StyleSheet.create({
     color: '#F3B431',
   },
 
- 
-
   //description
 
   descriptionContainer:{
@@ -178,6 +176,3 @@ const styles = StyleSheet.create({
 });
 
 export default EventDetailsScreen;
-
-
-
