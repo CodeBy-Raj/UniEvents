@@ -39,7 +39,7 @@ export const regEvent = async (eventData) => {
         );
         return response;
     } catch(error){
-        console.log('Error in registring', error); //debugging
+        // console.log('Error in registring', error); //debugging
         throw error;
         
     }

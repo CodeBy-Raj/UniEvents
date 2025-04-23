@@ -9,15 +9,23 @@ const EventForm = ({ onSubmit, initialData }) => {
   const [description, setDescription] = useState(initialData ? initialData.description : '');
   const [registrationLink, setRegistrationLink] = useState(initialData ? initialData.registrationLink : '');
   const [date, setDate] = useState(initialData ? initialData.date : '');
+  const [time, setTime] = useState(initialData? initialData.time : '');
+  const [regDeadline, setRegDeadline] = useState(initialData? initialData.regDeadline : '');
+  const [location, setLocation] = useState(initialData? initialData.location : '');
+  const [fee, setFee] = useState(initialData? initialData.fee : '');
 
   const handleSubmit = () => {
+    
     const eventData = {
-      
       clubName,
       title,
       description,
       registrationLink,
+      fee,
       date,
+      time,
+      location,
+      regDeadline
     };
     onSubmit(eventData);
   };
@@ -52,6 +60,12 @@ const EventForm = ({ onSubmit, initialData }) => {
         value={registrationLink}
         onChangeText={setRegistrationLink}
       />
+      <Text style={styles.label}>Registration Fee:</Text>
+      <TextInput
+        style={styles.input}
+        value={fee}
+        onChangeText={setFee}
+      />
       <Text style={styles.label}>Date:</Text>
       <TextInput
         style={styles.input}
@@ -59,6 +73,27 @@ const EventForm = ({ onSubmit, initialData }) => {
         onChangeText={setDate}
         
       />
+      <Text style={styles.label}>Time:</Text>
+      <TextInput
+        style={styles.input}
+        value={time}
+        onChangeText={setTime}
+        
+      />
+      <Text style={styles.label}>Registration Deadline:</Text>
+      <TextInput
+        style={styles.input}
+        value={regDeadline}
+        onChangeText={setRegDeadline}
+        
+      />
+      <Text style={styles.label}>Location:</Text>
+      <TextInput
+        style={styles.input}
+        value={location}
+        onChangeText={setLocation}
+        
+      /> 
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>

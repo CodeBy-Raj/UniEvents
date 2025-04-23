@@ -33,7 +33,7 @@ const EventDetailsScreen = ({ route }) => {
   {/* Event Location */}
   <View style={styles.row}>
     <Ionicons name="location-outline" size={18} color="#fff" />
-    <Text style={styles.date}> {event.location || 'Location TBD'}</Text>
+    <Text style={styles.date}> {event.location || 'TBD'}</Text>
   </View>
 
   {/* Registration Deadline */}
