@@ -21,7 +21,16 @@ const HomeScreen = () => {
       const eventList = await getEvents();
       setEvents(eventList);
     } catch (error) {
-      console.error("Error fetching events:", error);
+
+      if(error.message=='Network request failed'){
+      Toast.show({
+        type:'error',
+        text1:'No Internet Connection',
+        text2:'Connect And Refresh',
+        visibilityTime:5000
+      })
+    }
+      // console.error("Error fetching events:", error);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -48,7 +57,7 @@ const HomeScreen = () => {
 
     if(link){
       Toast.show({
-        type:'info',
+        type:'success',
         text1:'Opening',
         text2:'Redirecting to Browser.....',
         visibilityTime:3000

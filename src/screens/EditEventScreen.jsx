@@ -11,7 +11,14 @@ const EditEventScreen = ({ route, navigation }) => {
     // console.log('Route params :', route.params);
     
     if (!eventId) {
-        Alert.alert('Error', 'Event ID is missing');
+      Toast.show({
+        type:'info',
+        text1:'EventId missing !!', 
+        text1Style:{
+            fontSize:14
+        }   
+    })
+        // Alert.alert('Error', 'Event ID is missing');
         navigation.goBack(); // Navigate back if eventId is not provided
         return;
     }
@@ -24,8 +31,14 @@ const EditEventScreen = ({ route, navigation }) => {
             setEventData(data);
         } catch (error) {
           // console.log('fetche event error', error);
-          
-            Alert.alert('Error', 'Failed to fetch event data');
+          Toast.show({
+            type:'error',
+            text1:'Failed to fetch Event data!!', 
+            text1Style:{
+                fontSize:14
+            }   
+        })
+            // Alert.alert('Error', 'Failed to fetch event data');
         }
     };
 
@@ -37,12 +50,30 @@ const EditEventScreen = ({ route, navigation }) => {
       // console.log('updating event with data: ', updatedData);
       
       await editEvent(eventId, updatedData); // Update the event with new data
-      Alert.alert('Success', 'Event updated successfully');
+      Toast.show({
+        type:'success',
+        text1:'✅ Updation Done !!',
+        text2:'Event Updated Successfully !!',
+        text1Style:{
+          fontSize:14,
+        },
+        text2Style:{
+          fontSize:13
+        }
+        
+      })
+      // Alert.alert('Success', 'Event updated successfully');
       navigation.goBack(); // Navigate back to the previous screen
     } catch (error) {
       // console.log('update event errro', error);
-      
-      Alert.alert('Error', 'Failed to update event');
+      Toast.show({
+        type:'error',
+        text1:'Failed to Update Event ', 
+        text1Style:{
+            fontSize:14
+        }   
+    })
+      // Alert.alert('Error', 'Failed to update event');
     }
   };
 

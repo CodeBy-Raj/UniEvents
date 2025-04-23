@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Dimensions, RefreshControl, TouchableOpacity } from 'react-native';
-import { Avatar, Card, Button } from 'react-native-paper';
-import { BarChart } from 'react-native-chart-kit';
+import { Avatar, Card} from 'react-native-paper';
+// import { BarChart } from 'react-native-chart-kit';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const screenWidth = Dimensions.get('window').width;

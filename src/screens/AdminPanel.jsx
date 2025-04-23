@@ -44,7 +44,14 @@ const AdminPanel = ({route}) => {
       await deleteEvent(eventId); // Delete event from Appwrite
       fetchEvents(); // Refresh the event list
     } catch (error) {
-      Alert.alert('Error', 'Could not delete the event.');
+      Toast.show({
+        type:'error',
+        text1:'❌ Error deleting the event. !!', 
+        text1Style:{
+            fontSize:14
+        }   
+    })
+      // Alert.alert('Error', 'Could not delete the event.');
     }
   };
 

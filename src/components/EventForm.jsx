@@ -15,7 +15,7 @@ const EventForm = ({ onSubmit, initialData }) => {
   const [fee, setFee] = useState(initialData? initialData.fee : '');
 
   const handleSubmit = () => {
-    
+
     const eventData = {
       clubName,
       title,
@@ -107,8 +107,10 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#060318',
+    width:'100%',
   },
   container: {
+    // flex:1,
     padding: 20,
     backgroundColor: '#060318',
   },

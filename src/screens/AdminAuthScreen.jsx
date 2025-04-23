@@ -3,6 +3,7 @@ import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity, Vibration, 
 import { useNavigation } from '@react-navigation/native';
 import { Client,Databases } from 'appwrite';
 import Toast from 'react-native-toast-message';
+import { Icon } from 'react-native-paper';
 
 
 
@@ -32,8 +33,13 @@ const AdminAuthScreen = ({ onAuthSuccess }) => {
                 const response = await databases.listDocuments(databaseId, clubsCollectionId);
                 setClubs(response.documents); // Store the list of clubs
             } catch (error) {
-                console.error('Error fetching clubs:', error);
-                Alert.alert('Error', 'Failed to fetch club data.');
+                // console.error('Error fetching clubs:', error);
+                Toast.show({
+                    type:'error',
+                    text1:'Network Issue !!',
+                    text2:'Please check Network Connection'
+                })
+                // Alert.alert('Error', 'Failed to fetch club data.');
             }
         };
 
@@ -43,7 +49,14 @@ const AdminAuthScreen = ({ onAuthSuccess }) => {
     const checkCode = () => {
         
         if (!code.trim()) {
-            Alert.alert('Error', 'Please enter a code');
+            Toast.show({
+                type:'error',
+                text1:'❌ Incorrect Admin Code !!', 
+                text1Style:{
+                    fontSize:14
+                }   
+            })
+            // Alert.alert('Error', 'Please enter a code');
             return;
         }
 
@@ -53,16 +66,25 @@ const AdminAuthScreen = ({ onAuthSuccess }) => {
             onAuthSuccess(true); // Notify parent about successful authentication
             navigation.navigate('AdminPanel', { club: club.clubName }); // Pass the club name to AdminPanel
         } else {
-            Alert.alert('Access Denied', "Incorrect code !!");
+            Toast.show({
+                type:'error',
+                text1:'❌ Incorrect Admin Code !!', 
+                text1Style:{
+                    fontSize:14
+                }   
+            })
+            // Alert.alert('Access Denied', "Incorrect code !!");
         }
     };
 
     const creditMsg = () => {
         Toast.show({
             type:'success',
-            text1:'HEY !! Wait....',
-            text2:'Loading.....',
+            text1:'Hey 🙋‍♂️!! Wait....',
             visibilityTime:3000,
+            text1Style:{
+                fontSize:16,
+            }
             
         })
         setTimeout(() => {

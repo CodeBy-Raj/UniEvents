@@ -20,11 +20,19 @@ const AddEventScreen = ({navigation, route}) => {
 
 
   const handleAddEvent = async () => {
+
     if ( !title || !description || !date || !fee ||!time ||!regDeadline) {
       Toast.show({
         type:'error',
-        text1:'Error !!',
-        text2:'Please fill all Fields'
+        text1:'Fill Required Fields',
+        text2:'It cannot be empty',
+        text1Style:{
+          fontSize:14,
+        }, 
+        text2Style:{
+          fontSize:12,
+    
+        }    
       })
       // Alert.alert('Error', 'Please fill in all fields');
       return;
@@ -46,9 +54,32 @@ const AddEventScreen = ({navigation, route}) => {
     try {
       await addEvent(eventData); // Call the function to create an event
       Alert.alert('Success', 'Event added successfully');
+      Toast.show({
+        type:'success',
+        text1:'✅ Success !!',
+        text2:'Event Added Successfully !!',
+        text1Style:{
+          fontSize:14,
+        },
+        text2Style:{
+          fontSize:13
+        }
+        
+      })
       navigation.goBack(); // Navigate back to the Admin Panel
     } catch (error) {
-      Alert.alert('Error', 'Failed to add event. Please try again.');
+      Toast.show({
+        type:'error',
+        text1:'Failed to add event !!',
+        text2:'Please try again.',
+        text1Style:{
+          fontSize:14,
+        },
+        text2Style:{
+          fontSize:12
+        }
+      })
+      // Alert.alert('Error', 'Please try again');
     }
   };
 

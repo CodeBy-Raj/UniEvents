@@ -2,6 +2,7 @@ import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View 
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { regEvent } from '../services/appwrite';
+import Toast from 'react-native-toast-message';
 
 const RegisterScreen = ({route,navigation}) => {
     const {clubName,title} = route.params;
@@ -12,7 +13,15 @@ const RegisterScreen = ({route,navigation}) => {
 
 const handleSubmit = async()=> {
     if(!email || !phone || !name){
-        Alert.alert('Mandatory !!','Please fill all details');
+      Toast.show({
+        type:'error',
+        text1:'😒 Please fill required details !!', 
+        text1Style:{
+            fontSize:16
+        },   
+        visibilityTime:3000
+    })
+        // Alert.alert('Mandatory !!','Please fill all details');
         return;
     }
     const eventData ={
@@ -25,7 +34,27 @@ const handleSubmit = async()=> {
     try{
  
         await regEvent(eventData);
-        Alert.alert('Success !!!','Regisration success');
+         Toast.show({
+                type:'success',
+                text1:'✅ Success !!',
+                text2:'Registration Done !!',
+                text1Style:{
+                  fontSize:15,
+                },
+                text2Style:{
+                  fontSize:14
+                }
+              })
+              setTimeout(() => {
+                Toast.show({
+                  type:'success',
+                  text1:'Thank You For Registring !! 🙌',
+                  text1Style:{
+                    fontSize:14
+                  }
+                })
+              }, 2500);
+        // Alert.alert('Success !!!','Regisration success');
         navigation.goBack();
     }
     catch(error){
@@ -33,17 +62,49 @@ const handleSubmit = async()=> {
         // console.log('registation error :', error); //debug
         
         if(error.message === "Duplicate_Registration"){
-            Alert.alert('Already Registered', 'Duplicate Entries Not Allowed');
+           Toast.show({
+                          type:'error',
+                          text1:'❌ Duplicate Entries Not Allowed, Already Registered !!', 
+                          text1Style:{
+                              fontSize:14
+                          },
+                          visibilityTime:2000  
+                           
+                      })
+            // Alert.alert('Already Registered', 'Duplicate Entries Not Allowed');
         }
         else if(error.message.includes('Attribute "email" has invalid format')){
-            Alert.alert('Invalid Email Format' , "Please enter valid email address");
+           Toast.show({
+                          type:'error',
+                          text1:'❌ Invalid Email Format !!', 
+                          text1Style:{
+                              fontSize:14
+                          },
+                          visibilityTime:1500  
+                      })
+            // Alert.alert('Invalid Email Format' , "Please enter valid email address");
         }
         else if(error.message.includes('phone')){
-            Alert.alert('Invalid Phone Number', 'Kripya, Enter correct Phone number');
+           Toast.show({
+                          type:'error',
+                          text1:'❌ Invalid Phone Number !!', 
+                          text2:'Kripya, Enter correct Phone number',
+                          text1Style:{
+                              fontSize:14
+                          },
+                          visibilityTime:1500   
+                      })
+            // Alert.alert('Invalid Phone Number', 'Kripya, Enter correct Phone number');
         }
         else{
-
-            Alert.alert('Oops !!!', 'Registraion failed to submit')
+          Toast.show({
+            type:'info',
+            text1:'Oops !! Registraion failed to submit', 
+            text1Style:{
+                fontSize:14
+            }   
+        })
+            // Alert.alert('Oops !!!', 'Registraion failed to submit')
         }
     }
 }
