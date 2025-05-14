@@ -12,6 +12,7 @@ import EventDetailsScreen from './src/screens/EventDetailsScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
 import Toast from 'react-native-toast-message';
 import StudentDashboard from './src/screens/StudentDashboard';
+import { PaperProvider } from 'react-native-paper';
 
 
 const Tab = createBottomTabNavigator();
@@ -90,7 +91,8 @@ const App = () => {
   );
 
   return (
-    <NavigationContainer>
+    <PaperProvider>
+      <NavigationContainer>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
@@ -142,6 +144,8 @@ const App = () => {
       </Tab.Navigator>
       <Toast/>
     </NavigationContainer>
+    </PaperProvider>
+    
     
   );
 };

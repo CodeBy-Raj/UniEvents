@@ -1,26 +1,63 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, ActivityIndicator, Text, Linking } from 'react-native';
+import { View, FlatList, StyleSheet, ActivityIndicator, Text, Linking, TouchableOpacity, Button, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import EventCard from '../components/EventCard';
 import { getEvents } from '../services/appwrite';
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
-
-
+import unified from '../Colors/Colors';
+import { Divider, Menu } from 'react-native-paper';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const HomeScreen = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+const [selectedClub, setSelectedClub] = useState(null); // State for the selected club
 
+const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
+const clubs = ['ACM', 'ABESEC', 'KALAKRIT', 'GDSC','SAMVAAD']; // Example club names
+  
   const navigation = useNavigation();
+
+   const [menuVisible, setMenuVisible] = useState(false);
+
+  const openMenu = () => setMenuVisible(true);
+  const closeMenu = () => setMenuVisible(false);
+
+  const handleSortByClubName = () => {
+    closeMenu();
+    setModalVisible(true);
+    fetchEvents()
+  };
+useEffect(()=>{
+  fetchEvents();
+},[selectedClub]);
+
+const handleSelectClub = (clubName)=>{
+  setSelectedClub(clubName);
+  setModalVisible(false);
+  fetchEvents();
+}
+
+  const handleResetSorting = () => {
+    closeMenu();
+    setSelectedClub(null);
+    
+  fetchEvents();
+  };
 
   const fetchEvents = async () => {
     try {
       const eventList = await getEvents();
-      setEvents(eventList);
-    } catch (error) {
+      if(selectedClub) {
+        const filteredEvents = eventList.filter(event=>event.clubName === selectedClub);
+        setEvents(filteredEvents);
+      }
+      else setEvents(eventList);
+    } 
+    catch (error) {
 
       if(error.message=='Network request failed'){
       Toast.show({
@@ -37,17 +74,6 @@ const HomeScreen = () => {
     }
   };
 
-  //handling register button
-
-  // const handleRegister = (regLink)=>{
-
-  //   if (!regLink) {
-  //     Alert.alert("Wait", "Registration Not Started");
-  //     return;
-  //   }
-  //   Linking.openURL(regLink)
-  //   .catch(() => Alert.alert("Oops !","Failed to open "))
-  // }
 
 
   //handling registration screen......
@@ -84,6 +110,7 @@ const HomeScreen = () => {
       <View style={styles.headerContainer}>
         <View style={styles.shadowWrapper}>
           <Text style={styles.headerTxt}>Upcoming Events</Text>
+
         </View>
       </View>
     );
@@ -111,7 +138,42 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+
+<Modal
+  visible={modalVisible}
+  transparent={true}
+  animationType="slide"
+  onRequestClose={() => setModalVisible(false)}
+>
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    <View style={{ backgroundColor: '#fff', padding: 20, borderRadius: 10 }}>
+      {clubs.map((club) => (
+        <TouchableOpacity key={club} onPress={() => handleSelectClub(club)}>
+          <Text style={{ fontSize: 18, marginVertical: 10 }}>{club}</Text>
+        </TouchableOpacity>
+      ))}
+      <Button title="Cancel" onPress={() => setModalVisible(false)} />
+    </View>
+  </View>
+</Modal>
+
       <View style={styles.container}>
+
+         <View style={styles.menuContainer}>
+       <Menu
+  visible={menuVisible}
+  onDismiss={closeMenu}
+  anchor={
+    <TouchableOpacity onPress={openMenu}>
+      <Ionicons name="ellipsis-vertical" size={24} color="#fff" />
+    </TouchableOpacity>
+  }
+>
+  <Menu.Item onPress={handleSortByClubName} title="Sort by Club Name" />
+  <Divider />
+  <Menu.Item onPress={handleResetSorting} title="Reset Sorting" />
+</Menu>
+      </View>
         <FlatList
           data={events}
           keyExtractor={item => item.$id}
@@ -123,6 +185,7 @@ const HomeScreen = () => {
             />
           )}
           ListHeaderComponent={Header}
+       
           showsVerticalScrollIndicator={false}
           refreshing={refreshing}
           onRefresh={handleRefresh}
@@ -151,15 +214,19 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#060318"
+    backgroundColor: unified.primary
   },
 
   container: {
 
     flex: 1,
     padding: 10,
-    backgroundColor: '#060318',
+    backgroundColor: unified.primary,
 
+  },
+  menuContainer: {
+    alignItems: 'flex-end',
+    marginBottom: 10,
   },
 
  headerContainer: {
@@ -168,21 +235,21 @@ const styles = StyleSheet.create({
     height: 40,
   },
   shadowWrapper: {
-    shadowColor: '#ffffff',
+    shadowColor: unified.accent,
     shadowOpacity: 0.25,
     shadowOffset: {
       height: 2,
       width: 2,
     },
     shadowRadius: 4,
-    elevation: 10, // For Android shadow
+    elevation: 10,
   },
 
   headerTxt:{
 
     fontSize:18,
     fontWeight:'bold',
-    color:'#f9eed0',
+    color: unified.secondary,
     
   },
   //empty list component handling style...no data found
@@ -196,13 +263,13 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#f9eed0',
+    color: unified.secondary,
     marginTop: 10,
   },
   
   emptySubText: {
     fontSize: 14,
-    color: '#aaa',
+    color: unified.placeholder,
     marginTop: 4,
   },
 
