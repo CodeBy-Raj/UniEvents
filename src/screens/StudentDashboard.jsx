@@ -9,7 +9,7 @@ const screenWidth = Dimensions.get('window').width;
 const StudentDashboard = () => {
   const [student, setStudent] = useState({
     name: 'Harsh Raj',
-    email: 'harsh.raj@abes.ac.in',
+    email: 'harsh23b0@abes.ac.in',
     roll: '2100320190045',
   });
 
@@ -29,7 +29,7 @@ const StudentDashboard = () => {
 
   const onRefresh = () => {
     setRefreshing(true);
-    // Fetch data logic here
+   
     setTimeout(() => setRefreshing(false), 1000); // Simulate refresh
   };
 

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
+import unified from '../Colors/Colors';
 
 const EventDetailsScreen = ({ route }) => {
 
@@ -76,10 +77,10 @@ const styles = StyleSheet.create({
 
   },
   card: {
-    backgroundColor: '#1e1c2e',
+    backgroundColor: unified.cardClr,
     borderRadius: 12,
     padding: 20,
-    shadowColor: '#e4e3f0',
+    shadowColor: unified.accent,
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.9,
     shadowRadius: 10,
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: unified.secondary,
     marginBottom: 8,
   },
   clubName: {

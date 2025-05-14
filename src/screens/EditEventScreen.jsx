@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import EventForm from '../components/EventForm';
 import { getEventById, editEvent } from '../services/appwrite';
+import Toast from 'react-native-toast-message';
 
 const EditEventScreen = ({ route, navigation }) => {
   const { event:eventId } = route.params ; // Get the event ID from the route parameters
@@ -19,7 +20,7 @@ const EditEventScreen = ({ route, navigation }) => {
         }   
     })
         // Alert.alert('Error', 'Event ID is missing');
-        navigation.goBack(); // Navigate back if eventId is not provided
+        navigation.goBack(); 
         return;
     }
 
@@ -64,8 +65,9 @@ const EditEventScreen = ({ route, navigation }) => {
       })
       // Alert.alert('Success', 'Event updated successfully');
       navigation.goBack(); // Navigate back to the previous screen
-    } catch (error) {
-      // console.log('update event errro', error);
+    } 
+    catch (error) {
+      console.log('update event errro', error);
       Toast.show({
         type:'error',
         text1:'Failed to Update Event ', 

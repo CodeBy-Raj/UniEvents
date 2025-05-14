@@ -12,7 +12,7 @@ const EventForm = ({ onSubmit, initialData }) => {
   const [time, setTime] = useState(initialData? initialData.time : '');
   const [regDeadline, setRegDeadline] = useState(initialData? initialData.regDeadline : '');
   const [location, setLocation] = useState(initialData? initialData.location : '');
-  const [fee, setFee] = useState(initialData? initialData.fee : '');
+  const [fee, setFee] = useState(initialData? initialData.fee : 0);
 
   const handleSubmit = () => {
 
@@ -64,7 +64,8 @@ const EventForm = ({ onSubmit, initialData }) => {
       <TextInput
         style={styles.input}
         value={fee}
-        onChangeText={setFee}
+        onChangeText={(val) => setFee(parseInt(val) || 0)}
+        keyboardType='numeric'
       />
       <Text style={styles.label}>Date:</Text>
       <TextInput
