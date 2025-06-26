@@ -100,7 +100,7 @@ export const getEventById = async (eventId) => {
         const response = await databases.getDocument(databaseId, eventsCollectionId, eventId);
         return response;
     } catch (error) {
-        console.error('Error fetching event:', error);
+        // console.error('Error fetching event:', error);
         throw error;
     }
 };
