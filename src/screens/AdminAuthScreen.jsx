@@ -73,7 +73,6 @@ const AdminAuthScreen = ({ onAuthSuccess }) => {
                     fontSize:14
                 }   
             })
-            // Alert.alert('Access Denied', "Incorrect code !!");
         }
     };
 
