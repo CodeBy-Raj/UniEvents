@@ -89,7 +89,7 @@ export const getEvents = async () => {
         const response = await databases.listDocuments(databaseId, eventsCollectionId);
         return response.documents;
     } catch (error) {
-        console.error('Error fetching events:', error);
+        // console.error('Error fetching events:', error);
         throw error;
     }
 };
