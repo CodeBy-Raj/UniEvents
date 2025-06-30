@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#060318',
+    paddingBottom:80
   },
   loadingText: {
     color: '#ffffff',

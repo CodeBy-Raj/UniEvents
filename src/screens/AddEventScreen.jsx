@@ -85,8 +85,8 @@ const AddEventScreen = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView>
-         <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+         <View style={[styles.container, {paddingBottom: 80}]}>
         <Text style={styles.label}>Club Name (Already Fetched)</Text>
         <TextInput style={styles.input} value={clubName} />
 

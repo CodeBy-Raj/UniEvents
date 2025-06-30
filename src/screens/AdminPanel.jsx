@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Button, FlatList, Alert, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {getEvents, deleteEvent} from '../services/appwrite'; // Import functions to interact with Appwrite
 import EventCard from '../components/EventCard';
@@ -95,6 +95,7 @@ const AdminPanel = ({route}) => {
             showsVerticalScrollIndicator={false}
             refreshing={refreshing}
             onRefresh={handleRefreshAdmin}
+            contentContainerStyle={{paddingBottom: 60}}
             //when no events for that club then show this :
 
             ListEmptyComponent={() => (
@@ -109,6 +110,7 @@ const AdminPanel = ({route}) => {
               
               </View>
             )}
+
           />
         </View>
       </View>
@@ -134,8 +136,7 @@ const styles = StyleSheet.create({
   },
 
   headLineDesign: {
-    // padding: 5, // Add padding to give space for the shadow
-    margin: 10, // Add margin to separate it from other elements
+    margin: 10, 
     shadowColor: '#ffffff',
     shadowOpacity: 0.5,
     shadowOffset: {
@@ -143,14 +144,15 @@ const styles = StyleSheet.create({
       width: 2,
     },
     shadowRadius: 5,
-    elevation: 35, // For Android shadow
-    // backgroundColor: '#1e1e1e', // Add a subtle background color for better visibility
+    elevation: 35,
     borderRadius: 20, // Add border radius for smoother shadow edges
   },
 
   headLine: {
     fontSize: 22,
-    color: '#ffffff',
+    color: '#f9eed0',
+    fontWeight: 'bold',
+    fontFamily: 'times new roman',
   },
   //button desing -- add event button
 
@@ -173,8 +175,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: '#1e1e1e',
     padding: 10,
-    borderRadius: 15,
-
+    borderRadius: 35,
     shadowColor: '#ffffff',
     shadowOffset: {width: 4, height: 1},
     shadowOpacity: 0.2,
