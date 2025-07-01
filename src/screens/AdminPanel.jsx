@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {getEvents, deleteEvent} from '../services/appwrite'; // Import functions to interact with Appwrite
 import EventCard from '../components/EventCard';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -13,9 +13,11 @@ const AdminPanel = ({route}) => {
 
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchEvents();
+    }, [club])
+  );
 
   //fetching events of specified club only, from database -- using filter()
   const fetchEvents = async () => {

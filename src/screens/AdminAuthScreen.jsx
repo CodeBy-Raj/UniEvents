@@ -68,8 +68,15 @@ const [loading, setLoading] = useState(false);
     const club = clubs.find(club => club.secretCode === code);
 
     if (club) {
-      onAuthSuccess(true); // Notify parent about successful authentication
-      navigation.navigate('AdminPanel', {club: club.clubName}); // Pass the club name to AdminPanel
+      onAuthSuccess(true);
+      navigation.navigate('AdminPanel', {club: club.clubName});
+      Toast.show({
+        type: 'success',
+        text1: `✅ ${club.clubName}'s Panel !!`,
+        text1Style: {
+          fontSize: 14,
+        },
+      });
     } else {
       Toast.show({
         type: 'error',
