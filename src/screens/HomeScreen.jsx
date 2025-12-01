@@ -66,21 +66,18 @@ const HomeScreen = () => {
   const handleSortByClubName = useCallback(() => {
     closeMenu();
     setModalVisible(true);
-    // No need to call fetchEvents here - useEffect in viewModel handles it
   }, [closeMenu]);
-
-  // Removed redundant useEffect - the viewModel already has useEffect that triggers on selectedClub change
 
   const handleSelectClub = useCallback(clubName => {
     setSelectedClub(clubName);
     setModalVisible(false);
-    // No need to call fetchEvents - useEffect in viewModel handles it when selectedClub changes
+    // fetchEvents will be called automatically via useEffect -> fetchEvents dependency chain in viewModel
   }, [setSelectedClub]);
 
   const handleResetSorting = useCallback(() => {
     closeMenu();
     setSelectedClub(null);
-    // No need to call fetchEvents - useEffect in viewModel handles it when selectedClub changes
+    // fetchEvents will be called automatically via useEffect -> fetchEvents dependency chain in viewModel
   }, [closeMenu, setSelectedClub]);
 
   //handling registration screen......
