@@ -1,9 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   FlatList,
   StyleSheet,
-  ActivityIndicator,
   Text,
   Linking,
   TouchableOpacity,
@@ -19,6 +18,34 @@ import {Divider, Menu} from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useHomeViewModel} from '../viewModels/HomeViewModels';
 
+// Memoized clubs array to prevent recreation on each render
+const CLUBS = ['ACM', 'ABESEC', 'KALAKRIT', 'GDSC', 'SAMVAAD'];
+
+// Header component moved outside of HomeScreen to prevent recreation on each render
+const Header = () => (
+  <View style={styles.headerContainer}>
+    <View style={styles.shadowWrapper}>
+      <Text style={styles.headerTxt}>Upcoming Events</Text>
+    </View>
+  </View>
+);
+
+// Empty list component moved outside to prevent recreation on each render
+const EmptyEventsList = () => (
+  <View style={styles.emptyContainer}>
+    <LottieView
+      source={require('../assests/animations/empty.json')}
+      autoPlay
+      loop
+      style={styles.emptyAnimation}
+    />
+    <Text style={styles.emptyText}>😕 No Upcoming Events</Text>
+    <Text style={styles.emptySubText}>
+      Stay tuned, something exciting is coming!
+    </Text>
+  </View>
+);
+
 const HomeScreen = () => {
   const {
     events,
@@ -27,43 +54,38 @@ const HomeScreen = () => {
     selectedClub,
     setSelectedClub,
     onRefresh,
-    fetchEvents,
     isConnected,
-    setRefreshing
   } = useHomeViewModel();
   const [modalVisible, setModalVisible] = useState(false);
-  const clubs = ['ACM', 'ABESEC', 'KALAKRIT', 'GDSC', 'SAMVAAD'];
   const [menuVisible, setMenuVisible] = useState(false);
   const navigation = useNavigation();
 
-  const openMenu = () => setMenuVisible(true);
-  const closeMenu = () => setMenuVisible(false);
+  const openMenu = useCallback(() => setMenuVisible(true), []);
+  const closeMenu = useCallback(() => setMenuVisible(false), []);
 
-  const handleSortByClubName = () => {
+  const handleSortByClubName = useCallback(() => {
     closeMenu();
     setModalVisible(true);
-    fetchEvents();
-  };
-  useEffect(() => {
-    fetchEvents();
-  }, [selectedClub]);
+    // No need to call fetchEvents here - useEffect in viewModel handles it
+  }, [closeMenu]);
 
-  const handleSelectClub = clubName => {
+  // Removed redundant useEffect - the viewModel already has useEffect that triggers on selectedClub change
+
+  const handleSelectClub = useCallback(clubName => {
     setSelectedClub(clubName);
     setModalVisible(false);
-    fetchEvents();
-  };
+    // No need to call fetchEvents - useEffect in viewModel handles it when selectedClub changes
+  }, [setSelectedClub]);
 
-  const handleResetSorting = () => {
+  const handleResetSorting = useCallback(() => {
     closeMenu();
     setSelectedClub(null);
-
-    fetchEvents();
-  };
+    // No need to call fetchEvents - useEffect in viewModel handles it when selectedClub changes
+  }, [closeMenu, setSelectedClub]);
 
   //handling registration screen......
 
-  const handleRegister = event => {
+  const handleRegister = useCallback(event => {
     const link = event.registrationLink;
 
     if (link) {
@@ -82,43 +104,37 @@ const HomeScreen = () => {
         title: event.title,
       });
     }
-  };
+  }, [navigation]);
 
   //handling detail button on homescreen
-  const handleDetails = event => {
+  const handleDetails = useCallback(event => {
     navigation.navigate('EventDetails', {event});
-  };
-
-  //Main screen header
-  const Header = () => {
-    return (
-      <View style={styles.headerContainer}>
-        <View style={styles.shadowWrapper}>
-          <Text style={styles.headerTxt}>Upcoming Events</Text>
-        </View>
-      </View>
-    );
-  };
+  }, [navigation]);
 
   //handling refresh on load button slider
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(() => {
     onRefresh();
-  };
+  }, [onRefresh]);
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
+  // Memoized renderItem function to prevent recreation on each render
+  const renderEventItem = useCallback(({item}) => (
+    <EventCard
+      event={item}
+      onRegister={() => handleRegister(item)}
+      onDetails={() => handleDetails(item)}
+    />
+  ), [handleRegister, handleDetails]);
 
   if (loading) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <LottieView
-        source={require('../assests/animations/loading-ripple.json')}
-        autoPlay
-        loop
-        />
-        <Text style={{ marginTop: 10, color: '#aaa' }}>Loading Events...</Text>
+        <View style={styles.loadingContainer}>
+          <LottieView
+            source={require('../assests/animations/loading-ripple.json')}
+            autoPlay
+            loop
+          />
+          <Text style={styles.loadingText}>Loading Events...</Text>
         </View>
       </SafeAreaView>
     );
@@ -133,16 +149,15 @@ const HomeScreen = () => {
         animationType="slide"
         onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalBackdrop}>
-          <View
-            style={{backgroundColor: '#f9eed0', padding: 20, width:200,borderRadius: 30}}>
-            {clubs.map(club => (
+          <View style={styles.modalContent}>
+            {CLUBS.map(club => (
               <TouchableOpacity
                 key={club}
                 onPress={() => handleSelectClub(club)}>
-                <Text style={{fontSize: 18, marginVertical: 10}}>{club}</Text>
+                <Text style={styles.clubItem}>{club}</Text>
               </TouchableOpacity>
             ))}
-            <Text style={{fontSize: 16, color: 'gray', marginVertical: 10}}>
+            <Text style={styles.selectedClubText}>
               Selected Club: {selectedClub || 'None'}
             </Text>
             <TouchableOpacity
@@ -164,7 +179,7 @@ const HomeScreen = () => {
                 <Ionicons name="ellipsis-vertical" size={20} color="#fff" />
               </TouchableOpacity>
             }
-            style={{width: 200}}
+            style={styles.menu}
             >
             <Menu.Item onPress={handleSortByClubName} title="Sort by Clubs"/>
             <Divider />
@@ -194,7 +209,7 @@ const HomeScreen = () => {
               autoPlay
               loop
               speed={0.9}
-              style={{width: 300, height: 300}}
+              style={styles.noInternetAnimation}
             />
             <Text style={styles.emptyText}>😕 No Internet Connection</Text>
             <Text style={styles.emptySubText}>
@@ -205,34 +220,15 @@ const HomeScreen = () => {
           <FlatList
             data={events}
             keyExtractor={item => item.$id}
-            renderItem={({item}) => (
-              <EventCard
-                event={item}
-                onRegister={() => handleRegister(item)}
-                onDetails={() => handleDetails(item)}
-              />
-            )}
+            renderItem={renderEventItem}
             ListHeaderComponent={Header}
             showsVerticalScrollIndicator={false}
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            contentContainerStyle={{paddingBottom: 60}}
+            contentContainerStyle={styles.listContent}
             //when no events in database then this animations ....
 
-            ListEmptyComponent={() => (
-              <View style={styles.emptyContainer}>
-                <LottieView
-                  source={require('../assests/animations/empty.json')}
-                  autoPlay
-                  loop
-                  style={{width: 300, height: 300}}
-                />
-                <Text style={styles.emptyText}>😕 No Upcoming Events</Text>
-                <Text style={styles.emptySubText}>
-                  Stay tuned, something exciting is coming!
-                </Text>
-              </View>
-            )}
+            ListEmptyComponent={EmptyEventsList}
           />
         )}
       </View>
@@ -296,11 +292,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-noInternetContainer:{
+  noInternetContainer: {
     marginTop: 100,
     alignItems: 'center',
     justifyContent: 'center',
-},
+  },
   emptyText: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -312,6 +308,45 @@ noInternetContainer:{
     fontSize: 14,
     color: unified.placeholder,
     marginTop: 4,
+  },
+  // New styles to replace inline styles
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#aaa',
+  },
+  modalContent: {
+    backgroundColor: '#f9eed0',
+    padding: 20,
+    width: 200,
+    borderRadius: 30,
+  },
+  clubItem: {
+    fontSize: 18,
+    marginVertical: 10,
+  },
+  selectedClubText: {
+    fontSize: 16,
+    color: 'gray',
+    marginVertical: 10,
+  },
+  menu: {
+    width: 200,
+  },
+  noInternetAnimation: {
+    width: 300,
+    height: 300,
+  },
+  emptyAnimation: {
+    width: 300,
+    height: 300,
+  },
+  listContent: {
+    paddingBottom: 60,
   },
 });
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { handleModalEvents } from '../services/modalEvents';
 import Toast from 'react-native-toast-message';
 
@@ -9,45 +9,43 @@ export const useHomeViewModel = () => {
   const [selectedClub, setSelectedClub] = useState(null);
   const [isConnected, setIsConnected] = useState(true);
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       const result = await handleModalEvents(selectedClub);
       setEvents(result);
       setIsConnected(true);
     } catch (error) {
-      if (error.message == 'Network request failed') {
+      if (error.message === 'Network request failed') {
         setIsConnected(false);
-              Toast.show({
-                type: 'error',
-                text1: 'No Internet Connection',
-                text2: 'Connect And Refresh',
-                visibilityTime: 5000,
-              });
-            }
+        Toast.show({
+          type: 'error',
+          text1: 'No Internet Connection',
+          text2: 'Connect And Refresh',
+          visibilityTime: 5000,
+        });
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [selectedClub]);
 
   useEffect(() => {
     fetchEvents();
-  }, [selectedClub]);
+  }, [fetchEvents]);
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await fetchEvents();
-  };
+  }, [fetchEvents]);
 
   return {
     events,
     loading,
     refreshing,
-    setRefreshing,
     selectedClub,
     setSelectedClub,
     onRefresh,
-    fetchEvents,
-    isConnected
+    isConnected,
   };
 };

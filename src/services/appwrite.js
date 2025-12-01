@@ -1,6 +1,6 @@
 import {Client, Databases, Query} from 'appwrite';
 import {ID} from 'appwrite';
-import {DATABASE_ENDPOINT, DATABASE_PROJECT,DATABASE_ID,EVENTS_COLLECTION_ID,REG_COLLECTION_ID} from "@env";
+import {DATABASE_ENDPOINT, DATABASE_PROJECT, DATABASE_ID, EVENTS_COLLECTION_ID, REG_COLLECTION_ID} from '@env';
 // import { Alert } from 'react-native';
 console.log('ENV:', DATABASE_ENDPOINT, DATABASE_PROJECT, DATABASE_ID, EVENTS_COLLECTION_ID, REG_COLLECTION_ID);
 const client = new Client();
@@ -12,9 +12,9 @@ client
 const databases = new Databases(client);
 
 // Database and collection details
-const databaseId = DATABASE_ID; 
-const eventsCollectionId = EVENTS_COLLECTION_ID; 
-const regCollectionId =REG_COLLECTION_ID;
+const databaseId = DATABASE_ID;
+const eventsCollectionId = EVENTS_COLLECTION_ID;
+const regCollectionId = REG_COLLECTION_ID;
 
 //function to add registrations to databases ...
 export const regEvent = async eventData => {
