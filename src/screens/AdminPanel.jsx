@@ -1,69 +1,89 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {getEvents, deleteEvent} from '../services/appwrite'; // Import functions to interact with Appwrite
+import {getEvents, deleteEvent} from '../services/appwrite';
 import EventCard from '../components/EventCard';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import LottieView from 'lottie-react-native';
+import Toast from 'react-native-toast-message';
+
+// EmptyList component moved outside to prevent recreation on each render
+const EmptyEventsList = () => (
+  <View style={styles.emptyContainer}>
+    <LottieView
+      source={require('../assests/animations/empty.json')}
+      autoPlay
+      loop
+      style={styles.emptyAnimation}
+    />
+    <Text style={styles.emptyText}>😕 No Events Scheduled</Text>
+  </View>
+);
 
 const AdminPanel = ({route}) => {
   const {club} = route.params; // Get the club name from navigation params
   const [events, setEvents] = useState([]);
   const navigation = useNavigation();
-
   const [refreshing, setRefreshing] = useState(false);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchEvents();
-    }, [club])
-  );
-
   //fetching events of specified club only, from database -- using filter()
-  const fetchEvents = async () => {
-
+  const fetchEvents = useCallback(async () => {
     setRefreshing(true);
 
     try {
       const fetchedEvents = await getEvents(); // Fetch all events
-
       const clubEvents = fetchedEvents.filter(event => event.clubName === club); // Filter by club
       setEvents(clubEvents);
     } catch (error) {
-      console.error('Error fetching events:', error);
+      // Handle error silently - could be logged to an analytics service
     } finally {
       setRefreshing(false);
     }
-  };
+  }, [club]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchEvents();
+    }, [fetchEvents])
+  );
 
   //refresh loading function
-  const handleRefreshAdmin = async () => {
+  const handleRefreshAdmin = useCallback(async () => {
     await fetchEvents();
-  };
+  }, [fetchEvents]);
 
-  const handleDeleteEvent = async eventId => {
+  const handleDeleteEvent = useCallback(async eventId => {
     try {
       await deleteEvent(eventId); // Delete event from Appwrite
       fetchEvents(); // Refresh the event list
     } catch (error) {
       Toast.show({
-        type:'error',
-        text1:'❌ Error deleting the event. !!', 
-        text1Style:{
-            fontSize:14
-        }   
-    })
-      // Alert.alert('Error', 'Could not delete the event.');
+        type: 'error',
+        text1: '❌ Error deleting the event. !!',
+        text1Style: {
+          fontSize: 14,
+        },
+      });
     }
-  };
+  }, [fetchEvents]);
 
-  const handleAddEvent = () => {
+  const handleAddEvent = useCallback(() => {
     navigation.navigate('AddEvent', {club}); // Navigate to Add Event screen
-  };
+  }, [navigation, club]);
 
-  const handleEditEvent = event => {
+  const handleEditEvent = useCallback(event => {
     navigation.navigate('EditEvent', {event}); // Navigate to Edit Event screen with event data
-  };
+  }, [navigation]);
+
+  // Memoized renderItem to prevent recreation on each render
+  const renderEventItem = useCallback(({item}) => (
+    <EventCard
+      event={item}
+      onEdit={() => handleEditEvent(item.$id)}
+      onDelete={() => handleDeleteEvent(item.$id)}
+      isAdmin={true}
+    />
+  ), [handleEditEvent, handleDeleteEvent]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -73,46 +93,25 @@ const AdminPanel = ({route}) => {
             <Text style={styles.headLine}> {club}'s Admin Panel</Text>
           </View>
         </View>
-        
- {/* //add event button */}
-      <TouchableOpacity 
-      style={styles.btnStyle}
-      onPress={handleAddEvent} >
-        <Text style={styles.btnTxt}>Add Event</Text>
-      </TouchableOpacity>
-  
+
+        {/* //add event button */}
+        <TouchableOpacity
+          style={styles.btnStyle}
+          onPress={handleAddEvent}>
+          <Text style={styles.btnTxt}>Add Event</Text>
+        </TouchableOpacity>
 
         <View style={styles.cards}>
           <FlatList
             data={events}
             keyExtractor={item => item.$id}
-            renderItem={({item}) => (
-              <EventCard
-                event={item}
-                onEdit={() => handleEditEvent(item.$id)}
-                onDelete={() => handleDeleteEvent(item.$id)}
-                isAdmin={true}
-              />
-            )}
+            renderItem={renderEventItem}
             showsVerticalScrollIndicator={false}
             refreshing={refreshing}
             onRefresh={handleRefreshAdmin}
-            contentContainerStyle={{paddingBottom: 60}}
+            contentContainerStyle={styles.listContent}
             //when no events for that club then show this :
-
-            ListEmptyComponent={() => (
-              <View style={styles.emptyContainer}>
-                <LottieView
-                  source={require('../assests/animations/empty.json')}
-                  autoPlay
-                  loop
-                  style={{width: 200, height: 200}}
-                />
-                <Text style={styles.emptyText}>😕 No Events Scheduled</Text>
-              
-              </View>
-            )}
-
+            ListEmptyComponent={EmptyEventsList}
           />
         </View>
       </View>
@@ -138,7 +137,7 @@ const styles = StyleSheet.create({
   },
 
   headLineDesign: {
-    margin: 10, 
+    margin: 10,
     shadowColor: '#ffffff',
     shadowOpacity: 0.5,
     shadowOffset: {
@@ -158,17 +157,16 @@ const styles = StyleSheet.create({
   },
   //button desing -- add event button
 
-  btnStyle:{
+  btnStyle: {
     backgroundColor: '#f9eed0',
     padding: 12,
     borderRadius: 12,
     alignItems: 'center',
   },
-  btnTxt:{
-    fontSize:16,
-    fontWeight:'bold'
+  btnTxt: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
-
 
   cards: {
     flex: 1,
@@ -185,21 +183,28 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
 
-  //listemptycomponent for no data 
-
+  //listemptycomponent for no data
   emptyContainer: {
     marginTop: 50,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
+
   emptyText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#f9eed0',
     marginTop: 10,
   },
-  
+
+  emptyAnimation: {
+    width: 200,
+    height: 200,
+  },
+
+  listContent: {
+    paddingBottom: 60,
+  },
 });
 
 export default AdminPanel;

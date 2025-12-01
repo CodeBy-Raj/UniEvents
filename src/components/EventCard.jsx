@@ -1,9 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-const EventCard = ({ event, onRegister, onDetails ,  onEdit, onDelete, isAdmin = false }) => {
-
-
+const EventCard = memo(({ event, onRegister, onDetails, onEdit, onDelete, isAdmin = false }) => {
   return (
     <View style={styles.card}>
 
@@ -46,7 +44,7 @@ const EventCard = ({ event, onRegister, onDetails ,  onEdit, onDelete, isAdmin =
       
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   card: {

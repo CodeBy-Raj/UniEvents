@@ -1,83 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import EventForm from '../components/EventForm';
 import { getEventById, editEvent } from '../services/appwrite';
 import Toast from 'react-native-toast-message';
 
 const EditEventScreen = ({ route, navigation }) => {
-  const { event:eventId } = route.params ; // Get the event ID from the route parameters
+  const { event: eventId } = route.params; // Get the event ID from the route parameters
   const [eventData, setEventData] = useState(null);
 
   useEffect(() => {
-    // console.log('Route params :', route.params);
-    
     if (!eventId) {
       Toast.show({
-        type:'info',
-        text1:'EventId missing !!', 
-        text1Style:{
-            fontSize:14
-        }   
-    })
-        // Alert.alert('Error', 'Event ID is missing');
-        navigation.goBack(); 
-        return;
+        type: 'info',
+        text1: 'EventId missing !!',
+        text1Style: {
+          fontSize: 14,
+        },
+      });
+      navigation.goBack();
+      return;
     }
 
     const fetchEventData = async () => {
-        try {
-            const data = await getEventById(eventId); // Fetch event data by ID
-            // console.log('fetched event data:', data);
-            
-            setEventData(data);
-        } catch (error) {
-          // console.log('fetche event error', error);
-          Toast.show({
-            type:'error',
-            text1:'Failed to fetch Event data!!', 
-            text1Style:{
-                fontSize:14
-            }   
-        })
-            // Alert.alert('Error', 'Failed to fetch event data');
-        }
+      try {
+        const data = await getEventById(eventId); // Fetch event data by ID
+        setEventData(data);
+      } catch (error) {
+        Toast.show({
+          type: 'error',
+          text1: 'Failed to fetch Event data!!',
+          text1Style: {
+            fontSize: 14,
+          },
+        });
+      }
     };
 
     fetchEventData();
-}, [eventId]);
+  }, [eventId, navigation]);
 
-  const handleUpdateEvent = async (updatedData) => {
+  const handleUpdateEvent = useCallback(async (updatedData) => {
     try {
-      // console.log('updating event with data: ', updatedData);
-      
       await editEvent(eventId, updatedData); // Update the event with new data
       Toast.show({
-        type:'success',
-        text1:'✅ Updation Done !!',
-        text2:'Event Updated Successfully !!',
-        text1Style:{
-          fontSize:14,
+        type: 'success',
+        text1: '✅ Updation Done !!',
+        text2: 'Event Updated Successfully !!',
+        text1Style: {
+          fontSize: 14,
         },
-        text2Style:{
-          fontSize:13
-        }
-        
-      })
-      // Alert.alert('Success', 'Event updated successfully');
+        text2Style: {
+          fontSize: 13,
+        },
+      });
       navigation.goBack(); // Navigate back to the previous screen
-    } 
-    catch (error) {
-      console.log('update event errro', error);
+    } catch (error) {
       Toast.show({
-        type:'error',
-        text1:'Failed to Update Event ', 
-        text1Style:{
-            fontSize:14
-        }   
-    })
-      // Alert.alert('Error', 'Failed to update event');
+        type: 'error',
+        text1: 'Failed to Update Event ',
+        text1Style: {
+          fontSize: 14,
+        },
+      });
     }
-  };
+  }, [eventId, navigation]);
 
   if (!eventData) {
     return (
@@ -104,7 +90,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#060318',
-    paddingBottom:80
+    paddingBottom: 80,
   },
   loadingText: {
     color: '#ffffff',
