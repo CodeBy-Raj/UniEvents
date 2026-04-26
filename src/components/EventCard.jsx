@@ -1,142 +1,88 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { getFilePreview } from '../services/storageService';
 
-const EventCard = ({ event, onRegister, onDetails ,  onEdit, onDelete, isAdmin = false }) => {
-
-
+const EventCard = ({ event, onRegister, onDetails, onEdit, onDelete, isAdmin = false }) => {
   return (
-    <View style={styles.card}>
-
-      <View style={styles.titleContainer}>
-      <Text style={styles.title}>{event.title}</Text>
+    <View className="bg-cardBackground rounded-card p-4 mb-5 border border-cardBorder/20 shadow-card">
+      {/* Event Title */}
+      <View className="items-center mb-3">
+        {event.imageId ? (
+          <Image
+            source={{ uri: getFilePreview(event.imageId) }}
+            className="w-full h-40 rounded-lg mb-2"
+            resizeMode="cover"
+          />
+        ) : null}
+        <Text className="text-textPrimary text-xl font-bold text-center leading-6">
+          {event.title}
+        </Text>
       </View>
 
-      <View style={styles.miniContent}>
-
-      <Text style={styles.clubName}>by {event.clubName}</Text>
-      <Text style={styles.feeTxt}>₹ {event.fee}/-</Text>
-
+      {/* Club and Fee Container */}
+      <View className="flex-row justify-between items-center mb-3">
+        <View className="flex-1">
+          <Text className="text-textMuted text-base font-semibold">
+            by {event.clubName}
+          </Text>
+        </View>
+        <View className="bg-accent rounded-full px-4 py-2">
+          <Text className="text-textOnAccent text-sm font-bold">
+            ₹ {event.fee}/-
+          </Text>
+        </View>
       </View>
-      <Text style={styles.date}>Date: {event.date}</Text>
-      
-      <Text style={styles.description}>Location: {event.location}</Text>
 
-      <View style={styles.buttonContainer}>
+      {/* Event Details */}
+      <View className="space-y-2 mb-4">
+        <View className="bg-surfaceLight/30 rounded-lg p-2">
+          <Text className="text-textSecondary text-sm font-medium">
+            📅 Date: {event.date}
+          </Text>
+        </View>
+        <View className="bg-surfaceLight/30 rounded-lg p-2">
+          <Text className="text-textSecondary text-sm font-medium">
+            📍 Location: {event.location}
+          </Text>
+        </View>
+      </View>
+
+      {/* Action Buttons */}
+      <View className="flex-row space-x-3">
         {isAdmin ? (
           <>
-            <TouchableOpacity style={styles.editButton} onPress={onEdit}>
-              <Text style={styles.buttonText}>Edit</Text>
+            <TouchableOpacity 
+              className="flex-1 bg-warning rounded-button py-3 items-center active:opacity-80"
+              onPress={onEdit}
+            >
+              <Text className="text-white text-base font-bold">Edit</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.deleteButton} onPress={onDelete}>
-              <Text style={styles.buttonText}>Delete</Text>
+            <TouchableOpacity 
+              className="flex-1 bg-error rounded-button py-3 items-center active:opacity-80"
+              onPress={onDelete}
+            >
+              <Text className="text-white text-base font-bold">Delete</Text>
             </TouchableOpacity>
           </>
         ) : (
           <>
-            <TouchableOpacity style={styles.registerButton} onPress={onRegister}>
-              <Text style={styles.buttonText}>Register</Text>
+            <TouchableOpacity 
+              className="flex-1 bg-buttonPrimary rounded-button py-3 items-center mr-2 active:opacity-80 shadow-sm"
+              onPress={onRegister}
+            >
+              <Text className="text-textOnAccent text-base font-bold">Register</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.detailsButton} onPress={onDetails}>
-              <Text style={styles.buttonText}>Details</Text>
+            <TouchableOpacity 
+              className="flex-1 bg-buttonSecondary rounded-button py-3 items-center active:opacity-80 shadow-sm"
+              onPress={onDetails}
+            >
+              <Text className="text-textOnAccent text-base font-bold">Details</Text>
             </TouchableOpacity>
           </>
         )}
       </View>
-
-      
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    padding: 10,
-    marginVertical: 5,
-    backgroundColor: '#3a3546',
-    borderRadius: 16,
-    marginBottom: 19,
-  },
-  titleContainer:{
-    alignItems:'center',
-    marginBottom:10,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#fdfcfb',
-  },
-  miniContent:{
-    flexDirection:'row',
-    justifyContent:'space-evenly',
-    alignItems:'center',
-  },
-  clubName: {
-    color: '#9e9ea7',
-    fontSize: 17,
-    fontWeight: 'bold',
-  },
-  feeTxt:{
-    color:'#000000',
-    fontSize:16,
-    fontWeight:'bold',
-    // backgroundColor: price == 0 ? 'green' : 'white' ,
-    backgroundColor: '#FBD28B',
-    borderRadius:20,
-    padding:10,
-  },
-  date: {
-    color: '#cccccc',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  description: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#ecebf0',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  registerButton: {
-    backgroundColor: '#f9eed0',
-    padding: 10,
-    borderRadius: 12,
-    flex: 1,
-    marginRight: 5,
-    alignItems: 'center',
-  },
-  detailsButton: {
-    backgroundColor: '#f9eed0',
-    padding: 10,
-    borderRadius: 12,
-    flex: 1,
-    marginLeft: 5,
-    alignItems: 'center',
-  },
-
-  editButton: {
-    backgroundColor: '#ffa726', // Orange for edit
-    padding: 10,
-    borderRadius: 12,
-    flex: 1,
-    marginRight: 5,
-    alignItems: 'center',
-  },
-  deleteButton: {
-    backgroundColor: '#e53935', // Red for delete
-    padding: 10,
-    borderRadius: 12,
-    flex: 1,
-    marginLeft: 5,
-    alignItems: 'center',
-  },
-
-  buttonText: {
-    fontSize: 17,
-    fontWeight: 'bold',
-  },
-});
 
 export default EventCard;

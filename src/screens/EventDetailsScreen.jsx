@@ -3,23 +3,32 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
-import unified from '../Colors/Colors';
+import { COLORS } from '../constants/theme';
+import { Image } from 'react-native';
+import { getFilePreview } from '../services/storageService';
 
 const EventDetailsScreen = ({ route }) => {
 
   const { event } = route.params;
 
   return (
-    <LinearGradient colors={['#1c1b29', '#060318']} style={styles.container}>
+    <LinearGradient colors={[COLORS.primaryLight, COLORS.primary]} style={styles.container}>
 
       <View style={styles.card}>
+        {event.imageId ? (
+          <Image
+            source={{ uri: getFilePreview(event.imageId) }}
+            style={{ width: '100%', height: 200, borderRadius: 10, marginBottom: 10 }}
+            resizeMode="cover"
+          />
+        ) : null}
         <Text style={styles.title}>{event.title}</Text>
         <Text style={styles.clubName}>
-          <Ionicons name="people-outline" size={18} color="#fff" /> Organised By: {event.clubName}
+          <Ionicons name="people-outline" size={18} color={COLORS.textPrimary} /> Organised By: {event.clubName}
         </Text>
 
         <View style={styles.row}>
-          <MaterialIcons name="event" size={18} color="#fff" />
+          <MaterialIcons name="event" size={18} color={COLORS.textPrimary} />
           <Text style={styles.date}> {event.date}</Text>
           
         </View>
@@ -27,19 +36,19 @@ const EventDetailsScreen = ({ route }) => {
         
   {/* Event Time */}
   <View style={styles.row}>
-    <Ionicons name="time-outline" size={18} color="#fff" />
+    <Ionicons name="time-outline" size={18} color={COLORS.textPrimary} />
     <Text style={styles.date}> {event.time || 'Time not set'}</Text>
   </View>
 
   {/* Event Location */}
   <View style={styles.row}>
-    <Ionicons name="location-outline" size={18} color="#fff" />
+    <Ionicons name="location-outline" size={18} color={COLORS.textPrimary} />
     <Text style={styles.date}> {event.location || 'TBD'}</Text>
   </View>
 
   {/* Registration Deadline */}
   <View style={styles.row}>
-    <MaterialIcons name="schedule" size={18} color="#fff" />
+    <MaterialIcons name="schedule" size={18} color={COLORS.textPrimary} />
     <Text style={styles.date}> Reg Deadline: {event.regDeadline || 'N/A'}</Text>
   </View>
 
@@ -55,7 +64,7 @@ const EventDetailsScreen = ({ route }) => {
       <View style={styles.descriptionContainer}>
 
         <View style={styles.descTitleContainer}>
-        <Text style={styles.descriptionTitle}> <Ionicons name="clipboard" size={20} color="#fff" />  Know Before You Go !</Text>
+        <Text style={styles.descriptionTitle}> <Ionicons name="clipboard" size={20} color={COLORS.textPrimary} />  Know Before You Go !</Text>
         </View>
 
         <View style={styles.descCard}>
@@ -77,10 +86,10 @@ const styles = StyleSheet.create({
 
   },
   card: {
-    backgroundColor: unified.cardClr,
+    backgroundColor: COLORS.surface,
     borderRadius: 12,
     padding: 20,
-    shadowColor: unified.accent,
+    shadowColor: COLORS.accent,
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.9,
     shadowRadius: 10,
@@ -89,12 +98,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: unified.secondary,
+    color: COLORS.secondary,
     marginBottom: 8,
   },
   clubName: {
     fontSize: 18,
-    color: '#d4d3dd',
+    color: COLORS.textSecondary, // textSecondary
     marginBottom: 6,
   },
   row: {
@@ -104,7 +113,7 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: 16,
-    color: '#bbb',
+    color: COLORS.textMuted, // textMuted
     marginLeft: 5,
   },
  
@@ -117,12 +126,12 @@ const styles = StyleSheet.create({
   freeText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#32cd32',
+    color: COLORS.success, // success
   },
   feeText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#F3B431',
+    color: COLORS.accent, // accent
   },
 
   //description
@@ -136,10 +145,10 @@ const styles = StyleSheet.create({
     // padding:5
     margin:5,
     borderRadius:10,
-    backgroundColor: '#1e1c2e',
+    backgroundColor: COLORS.primaryLight, // primaryLight
     borderRadius: 12,
     // padding: 10,
-    shadowColor: '#ffffff',
+    shadowColor: COLORS.secondary, // secondary
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.9,
     shadowRadius: 10,
@@ -159,18 +168,17 @@ const styles = StyleSheet.create({
     // borderWidth:2,
     // borderColor:'white',
     padding:15,
-  
   },
 
   descriptionTitle:{
-    color:'#f9eed0',
+    color: COLORS.secondary, // secondary
     fontSize:22,
     fontWeight:'bold',
   },
  description: {
   // flex:1,
     fontSize: 18,
-    color: '#e4e3f0',
+    color: COLORS.textPrimary, // textPrimary
     marginVertical: 10,
   },
 

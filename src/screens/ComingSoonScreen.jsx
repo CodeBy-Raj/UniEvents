@@ -4,9 +4,9 @@ import LottieView from 'lottie-react-native';
 
 export default function StudentPanel() {
   return (
-    <View style={styles.container}>
+    <View className="flex-1 p-3 bg-primary justify-center items-center">
       <LottieView
-        source={require('../assests/animations/soon.json')}
+        source={require('../assets/animations/soon.json')}
         autoPlay
         loop
         speed={2}
@@ -20,18 +20,3 @@ export default function StudentPanel() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: '#060318',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headlineTxt: {
-    color: '#ffffff',
-    fontSize: 24,
-    fontWeight: 'bold,',
-  },
-});

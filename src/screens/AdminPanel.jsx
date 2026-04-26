@@ -1,50 +1,63 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {getEvents, deleteEvent} from '../services/appwrite'; // Import functions to interact with Appwrite
+import { COLORS } from '../constants/theme';
 import EventCard from '../components/EventCard';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import LottieView from 'lottie-react-native';
+import { ActivityIndicator } from 'react-native-paper';
+import Toast from 'react-native-toast-message';
 
-const AdminPanel = ({route}) => {
-  const {club} = route.params; // Get the club name from navigation params
+const AdminPanel = ({route, navigation}) => {
+  const {club} = route.params;
   const [events, setEvents] = useState([]);
-  const navigation = useNavigation();
-
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchEvents();
-    }, [club])
-  );
-
-  //fetching events of specified club only, from database -- using filter()
-  const fetchEvents = async () => {
-
+  // Fetch events for the current club
+  const fetchEvents = useCallback(async () => {
     setRefreshing(true);
-
+    setLoading(true);
     try {
-      const fetchedEvents = await getEvents(); // Fetch all events
-
-      const clubEvents = fetchedEvents.filter(event => event.clubName === club); // Filter by club
+      const fetchedEvents = await getEvents();
+      const clubEvents = fetchedEvents.filter(event => event.clubName === club);
       setEvents(clubEvents);
     } catch (error) {
       console.error('Error fetching events:', error);
+      Toast.show({
+        type: 'error',
+        text1: '❌ Error fetching events!',
+        text1Style: {fontSize: 14}
+      });
     } finally {
       setRefreshing(false);
+      setLoading(false);
     }
-  };
+  }, [club]);
 
-  //refresh loading function
+  // Refetch events every time the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchEvents();
+      // Optionally, reset state on blur/unmount to avoid stale/blank state
+      return () => {
+        setEvents([]);
+        setLoading(true);
+        setRefreshing(false);
+      };
+    }, [fetchEvents])
+  );
+
+  // Manual refresh
   const handleRefreshAdmin = async () => {
     await fetchEvents();
   };
 
   const handleDeleteEvent = async eventId => {
     try {
-      await deleteEvent(eventId); // Delete event from Appwrite
-      fetchEvents(); // Refresh the event list
+      await deleteEvent(eventId);
+      fetchEvents();
     } catch (error) {
       Toast.show({
         type:'error',
@@ -52,154 +65,83 @@ const AdminPanel = ({route}) => {
         text1Style:{
             fontSize:14
         }   
-    })
-      // Alert.alert('Error', 'Could not delete the event.');
+      });
     }
   };
 
   const handleAddEvent = () => {
-    navigation.navigate('AddEvent', {club}); // Navigate to Add Event screen
+    // Navigate to AddEvent
+    navigation.navigate('AddEvent', {
+      club,
+    });
   };
 
+  // FIX: Pass the full event object, not just the id, to EditEvent
+  // This prevents EditEvent from having to fetch the event again (which can fail if the event is not found or network is slow)
   const handleEditEvent = event => {
-    navigation.navigate('EditEvent', {event}); // Navigate to Edit Event screen with event data
+    navigation.navigate('EditEvent', {
+      event, // pass the full event object
+    });
   };
+
+  // Optionally, listen for navigation param to trigger refresh (if using navigation.goBack with params)
+  useEffect(() => {
+    if (route.params?.refresh) {
+      fetchEvents();
+      navigation.setParams({refresh: undefined});
+    }
+  }, [route.params?.refresh, fetchEvents, navigation]);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <View style={styles.headLineContainer}>
-          <View style={styles.headLineDesign}>
-            <Text style={styles.headLine}> {club}'s Admin Panel</Text>
+    <SafeAreaView className="flex-1 bg-primary">
+      <View className="flex-1 justify-center items-center bg-primary p-5 gap-16">
+        <View className="justify-center w-full">
+          <View className="m-2 shadow-card rounded-2xl">
+            <Text className="text-secondary text-2xl font-bold font-serif"> {club}'s Admin Panel</Text>
           </View>
         </View>
-        
- {/* //add event button */}
-      <TouchableOpacity 
-      style={styles.btnStyle}
-      onPress={handleAddEvent} >
-        <Text style={styles.btnTxt}>Add Event</Text>
-      </TouchableOpacity>
-  
-
-        <View style={styles.cards}>
-          <FlatList
-            data={events}
-            keyExtractor={item => item.$id}
-            renderItem={({item}) => (
-              <EventCard
-                event={item}
-                onEdit={() => handleEditEvent(item.$id)}
-                onDelete={() => handleDeleteEvent(item.$id)}
-                isAdmin={true}
-              />
-            )}
-            showsVerticalScrollIndicator={false}
-            refreshing={refreshing}
-            onRefresh={handleRefreshAdmin}
-            contentContainerStyle={{paddingBottom: 60}}
-            //when no events for that club then show this :
-
-            ListEmptyComponent={() => (
-              <View style={styles.emptyContainer}>
-                <LottieView
-                  source={require('../assests/animations/empty.json')}
-                  autoPlay
-                  loop
-                  style={{width: 200, height: 200}}
+        {/* add event button */}
+        <TouchableOpacity className="bg-buttonPrimary py-3 px-6 rounded-xl items-center w-full max-w-xs active:opacity-80" onPress={handleAddEvent}>
+          <Text className="font-bold text-base text-textOnAccent">Add Event</Text>
+        </TouchableOpacity>
+        <View className="flex-1 w-[90%] min-h-[150px] self-center bg-surface p-3 rounded-3xl shadow-card">
+          {loading ? (
+            <View className="flex-1 items-center justify-center">
+              <ActivityIndicator size="large" color={COLORS.textMuted} />
+            </View>
+          ) : (
+            <FlatList
+              data={events}
+              keyExtractor={item => item.$id}
+              renderItem={({item}) => (
+                <EventCard
+                  event={item}
+                  onEdit={() => handleEditEvent(item)} // Pass the full event object
+                  onDelete={() => handleDeleteEvent(item.$id)}
+                  isAdmin={true}
                 />
-                <Text style={styles.emptyText}>😕 No Events Scheduled</Text>
-              
-              </View>
-            )}
-
-          />
+              )}
+              showsVerticalScrollIndicator={false}
+              refreshing={refreshing}
+              onRefresh={handleRefreshAdmin}
+              contentContainerStyle={{paddingBottom: 60}}
+              ListEmptyComponent={() => (
+                <View className="mt-12 items-center justify-center">
+                  <LottieView
+                    source={require('../assets/animations/empty.json')}
+                    autoPlay
+                    loop
+                    style={{width: 200, height: 200}}
+                  />
+                  <Text className="text-secondary text-lg font-bold mt-2"> No Events Scheduled</Text>
+                </View>
+              )}
+            />
+          )}
         </View>
       </View>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#060318',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#060318',
-    padding: 20,
-    gap: 70,
-  },
-  headLineContainer: {
-    justifyContent: 'center',
-  },
-
-  headLineDesign: {
-    margin: 10, 
-    shadowColor: '#ffffff',
-    shadowOpacity: 0.5,
-    shadowOffset: {
-      height: 2,
-      width: 2,
-    },
-    shadowRadius: 5,
-    elevation: 35,
-    borderRadius: 20, // Add border radius for smoother shadow edges
-  },
-
-  headLine: {
-    fontSize: 22,
-    color: '#f9eed0',
-    fontWeight: 'bold',
-    fontFamily: 'times new roman',
-  },
-  //button desing -- add event button
-
-  btnStyle:{
-    backgroundColor: '#f9eed0',
-    padding: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  btnTxt:{
-    fontSize:16,
-    fontWeight:'bold'
-  },
-
-
-  cards: {
-    flex: 1,
-    width: '90%',
-    minHeight: 150,
-    alignSelf: 'center',
-    backgroundColor: '#1e1e1e',
-    padding: 10,
-    borderRadius: 35,
-    shadowColor: '#ffffff',
-    shadowOffset: {width: 4, height: 1},
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 8,
-  },
-
-  //listemptycomponent for no data 
-
-  emptyContainer: {
-    marginTop: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  
-  emptyText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#f9eed0',
-    marginTop: 10,
-  },
-  
-});
 
 export default AdminPanel;

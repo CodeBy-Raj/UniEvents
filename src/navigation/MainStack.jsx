@@ -7,7 +7,7 @@ import RegisterScreen from '../screens/RegisterScreen';
 const Stack = createNativeStackNavigator();
 
 const MainStack = () => (
-  <Stack.Navigator>
+  <Stack.Navigator screenOptions={{ contentStyle: { backgroundColor: '#060318' } }}>
     <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
     <Stack.Screen name="EventDetails" component={EventDetailsScreen} options={{ headerShown: false }} />
     <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }} />

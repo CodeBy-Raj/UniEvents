@@ -1,171 +1,121 @@
-import React, {useEffect, useState} from 'react';
+import React, { useMemo } from 'react';
 import {
   View,
   Text,
   ScrollView,
-  StyleSheet,
   RefreshControl,
   TouchableOpacity,
   useWindowDimensions,
+  ActivityIndicator,
+  StyleSheet,
 } from 'react-native';
 import {ProgressChart} from 'react-native-chart-kit';
-import {Avatar, Card} from 'react-native-paper';
+import {Avatar} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import { COLORS } from '../constants/theme';
+import useStudentDashboardViewModel from '../viewModels/StudentDashboardViewModel';
 
-const StudentDashboard = () => {
+// Move static configuration outside the component
+const chartConfig = {
+  backgroundGradientFrom: '#1E2923',
+  backgroundGradientFromOpacity: 0,
+  backgroundGradientTo: '#08130D',
+  backgroundGradientToOpacity: 0.5,
+  color: (opacity = 1) => `rgba(225, 255, 255, ${opacity})`,
+  propsForLabels: {
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+};
+
+const StudentDashboard = ({ route }) => {
   const {width: screenWidth} = useWindowDimensions();
+  const {
+    student,
+    attendanceData,
+    subjectList,
+    loading,
+    refreshing,
+    onRefresh,
+  } = useStudentDashboardViewModel(route.params);
 
-  const data = {
-    labels: ['Java', 'OS', 'Cyber Security', 'TAFL', 'TC', 'Maths'], // optional
-    data: [0.7, 0.62, 0.6, 0.82, 0.51, 0.63],
-    colors: ['orange', 'green', 'lightpink', 'white', 'yellow', 'brown'],
-  };
-  const chartConfig = {
-    backgroundGradientFrom: '#1E2923',
-    backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: '#08130D',
-    backgroundGradientToOpacity: 0.5,
-    color: (opacity = 1) => `rgba(225, 255, 255, ${opacity})`,
-    propsForLabels: {
-      fontSize: 10,
-      fontWeight: 'bold',
-    },
-  };
+  const chartWidth = useMemo(() => screenWidth - 35, [screenWidth]);
 
-  const [student, setStudent] = useState({
-    name: 'Harsh Raj',
-    email: 'harsh23b0@abes.ac.in',
-    roll: '2100320190045',
-  });
-
-  const [attendance, setAttendance] = useState([
-    {subject: 'DSA', held: 30, attended: 26},
-    {subject: 'DBMS', held: 28, attended: 21},
-    {subject: 'Maths', held: 25, attended: 22},
-  ]);
-
-  const [quizzes, setQuizzes] = useState([
-    {
-      subject: 'DBMS',
-      quizTitle: 'Quiz 1',
-      score: 18,
-      total: 20,
-      date: '2025-04-10',
-    },
-    {
-      subject: 'Maths',
-      quizTitle: 'Quiz 1',
-      score: 16,
-      total: 20,
-      date: '2025-04-12',
-    },
-  ]);
-
-  const [refreshing, setRefreshing] = useState(false);
-
-  const onRefresh = () => {
-    setRefreshing(true);
-
-    setTimeout(() => setRefreshing(false), 1000); // Simulate refresh
-  };
-
-  const [expandedIndex, setExpandedIndex] = useState(null);
-
-  const toggleExpand = index => {
-    setExpandedIndex(expandedIndex === index ? null : index);
-  };
+  if (loading && !refreshing) {
+    return (
+      <View className="flex-1 justify-center items-center bg-primaryDark">
+        <ActivityIndicator size="large" color={COLORS.accent} />
+      </View>
+    );
+  }
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView className="flex-1">
       <ScrollView
-        style={styles.container}
+        className="flex-1 p-4 bg-primaryDark"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
         {/* Header */}
-        <View style={styles.header}>
-          <Avatar.Text size={60} label={student.name[0]} />
-          <View style={{marginLeft: 10}}>
-            <Text style={styles.name}>{student.name}</Text>
-            <Text style={styles.email}>{student.email}</Text>
-            <Text style={styles.email}>Roll No: {student.roll}</Text>
+        <View className="flex-row items-center mb-5">
+          <Avatar.Text size={60} label={student.name[0]} style={{backgroundColor: COLORS.accent}} />
+          <View className="ml-3">
+            <Text className="text-textPrimary text-lg font-semibold">{student.name}</Text>
+            <Text className="text-textMuted text-sm">{student.email}</Text>
+            <Text className="text-textMuted text-sm">Roll No: {student.roll}</Text>
           </View>
         </View>
 
         {/* Attendance Chart */}
-        <Text style={styles.sectionTitle}>Attendance Summary</Text>
-        {/* <ScrollView horizontal contentOffset={{x:100,y:300}}> */}
-        <View style={{paddingLeft:0}}>
-
-        <ProgressChart
-          data={data}
-          width={screenWidth - 35}
-          height={250}
-          strokeWidth={10}
-          radius={35}
-          chartConfig={chartConfig}
-          hideLegend={false}
-          withCustomBarColorFromData
-        />
+        <Text className="text-textPrimary text-base font-bold my-2">Attendance Summary</Text>
+        <View style={styles.chartContainer}>
+          {attendanceData.data.length > 0 ? (
+            <ProgressChart
+              data={attendanceData}
+              width={chartWidth}
+              height={250}
+              strokeWidth={10}
+              radius={35}
+              chartConfig={chartConfig}
+              hideLegend={false}
+              withCustomBarColorFromData
+            />
+          ) : (
+            <Text className="text-textMuted py-10">No attendance data available</Text>
+          )}
         </View>
-        {/* </ScrollView> */}
-        {/* Quiz Cards */}
+
+        {/* Subject Details List */}
+        <Text className="text-textPrimary text-base font-bold mt-5 mb-2">Subject Details</Text>
+        {subjectList.map((subject, index) => (
+          <View key={index} className="bg-cardBackground p-4 rounded-xl mb-3 border border-cardBorder/20">
+            <View className="flex-row justify-between items-center mb-2">
+              <Text className="text-textPrimary font-bold flex-1 mr-2">{subject.subject}</Text>
+              <Text className={`font-bold ${parseFloat(subject.percent) < 75 ? 'text-error' : 'text-success'}`}>
+                {subject.percent}
+              </Text>
+            </View>
+            <View className="flex-row justify-between">
+              <Text className="text-textMuted text-xs">Held: {subject.held}</Text>
+              <Text className="text-textMuted text-xs">Attended: {subject.attended}</Text>
+            </View>
+          </View>
+        ))}
 
         {/* Refresh Button */}
-        <TouchableOpacity onPress={onRefresh} style={styles.refreshButton}>
-          <Text style={styles.btnTxt}>Refresh Data</Text>
+        <TouchableOpacity onPress={onRefresh} className="mt-5 bg-buttonPrimary py-2 rounded-xl items-center mb-10">
+          <Text className="text-textOnAccent font-bold text-base">Refresh Data</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default StudentDashboard;
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 15,
-    backgroundColor: '#000000',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#ffffff',
-  },
-  email: {
-    fontSize: 14,
-    color: '#777',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginVertical: 10,
-    color: '#f3f3f3',
-  },
-  chart: {
-    borderRadius: 12,
-    marginBottom: 20,
-  },
-  card: {
-    marginVertical: 6,
-    backgroundColor: '#f3f3f3',
-  },
-  refreshButton: {
-    marginTop: 20,
-    backgroundColor: '#f9eed0',
-    padding: 8,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  btnTxt: {
-    color: '#000000',
-    fontWeight: 'bold',
-    fontSize: 15,
-  },
+  chartContainer: {
+    paddingLeft: 0, 
+    alignItems: 'center'
+  }
 });
+
+export default StudentDashboard;

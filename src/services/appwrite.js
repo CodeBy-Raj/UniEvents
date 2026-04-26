@@ -1,13 +1,12 @@
-import {Client, Databases, Query} from 'appwrite';
-import {ID} from 'appwrite';
-import {DATABASE_ENDPOINT, DATABASE_PROJECT,DATABASE_ID,EVENTS_COLLECTION_ID,REG_COLLECTION_ID} from "@env";
-// import { Alert } from 'react-native';
-console.log('ENV:', DATABASE_ENDPOINT, DATABASE_PROJECT, DATABASE_ID, EVENTS_COLLECTION_ID, REG_COLLECTION_ID);
-const client = new Client();
+import {Client, Databases, Query, Storage, ID} from 'react-native-appwrite';
+import {DATABASE_ENDPOINT, DATABASE_PROJECT,DATABASE_ID,EVENTS_COLLECTION_ID,REG_COLLECTION_ID, STORAGE_BUCKET_ID} from "@env";
+
+export const client = new Client();
 
 client
   .setEndpoint(DATABASE_ENDPOINT)
-  .setProject(DATABASE_PROJECT);
+  .setProject(DATABASE_PROJECT)
+  .setPlatform('com.unievents');
 
 const databases = new Databases(client);
 

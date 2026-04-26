@@ -1,11 +1,14 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MainStack from './MainStack';
 import AdminStack from './AdminStack';
 import StudentStack from './StudentStack';
 import { BlurView } from '@react-native-community/blur';
 import { StyleSheet, useWindowDimensions } from 'react-native';
+
+import { COLORS } from '../constants/theme';
 
 const Tab = createBottomTabNavigator();
 
@@ -39,8 +42,8 @@ return(
         else if (route.name === 'Student') iconName = 'walk-outline';
         return <Ionicons name={iconName} size={size} color={color} />;
       },
-      tabBarActiveTintColor: '#FBD28B',
-      tabBarInactiveTintColor: '#000000',
+      tabBarActiveTintColor: COLORS.accent,
+      tabBarInactiveTintColor: COLORS.primaryDark,
 
       tabBarLabelStyle: {
         fontSize: 13,
@@ -52,18 +55,38 @@ return(
          tabBarBackground: () => (
         <BlurView
           style={StyleSheet.absoluteFill}
-          blurType="light"
+          blurType="dark"
           blurAmount={10}
-          reducedTransparencyFallbackColor="white"
+          reducedTransparencyFallbackColor="black"
           />
     ),
     tabBarPressColor: "transparent",
     })}
   >
-    <Tab.Screen name="Events" component={MainStack} options={{ headerShown: false }} />
+    <Tab.Screen 
+      name="Events" 
+      component={MainStack} 
+      options={({ route }) => {
+        const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';
+        const isTabBarVisible = !['EventDetails', 'RegisterScreen'].includes(routeName);
+        
+        return {
+          headerShown: false,
+          tabBarStyle: isTabBarVisible ? dynamicTabBarStyle : { display: 'none' },
+        };
+      }}
+    />
     <Tab.Screen
       name="Admin"
-      options={{ headerShown: false }}
+      options={({ route }) => {
+        const routeName = getFocusedRouteNameFromRoute(route) ?? 'AdminAuth';
+        const isTabBarVisible = !['AddEvent', 'EditEvent', 'EventDetails'].includes(routeName);
+        
+        return {
+          headerShown: false,
+          tabBarStyle: isTabBarVisible ? dynamicTabBarStyle : { display: 'none' },
+        };
+      }}
     >
       {() => <AdminStack isAuthenticated={isAdminAuthenticated} onAuth={onAdminAuth} />}
     </Tab.Screen>

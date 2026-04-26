@@ -1,15 +1,28 @@
 import React, { useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { PaperProvider } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
 import AppNavigator from './src/navigation/AppNavigator';
+import { COLORS } from './src/constants/theme';
+import './global.css';
 
 const App = () => {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
+  const CustomDarkTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: COLORS.primary, // Set global background to primary dark color
+      card: COLORS.surface,
+      text: COLORS.textPrimary,
+      border: COLORS.surfaceLight,
+    },
+  };
+
   return (
     <PaperProvider>
-      <NavigationContainer>
+      <NavigationContainer theme={CustomDarkTheme}>
         <AppNavigator
           isAdminAuthenticated={isAdminAuthenticated}
           onAdminAuth={setIsAdminAuthenticated}

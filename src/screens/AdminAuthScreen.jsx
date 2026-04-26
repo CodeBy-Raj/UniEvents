@@ -3,14 +3,14 @@ import {
   View,
   Text,
   TextInput,
-  StyleSheet,
   TouchableOpacity,
   Vibration,
   Linking,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {Client, Databases} from 'appwrite';
+import {Client, Databases} from 'react-native-appwrite';
 import Toast from 'react-native-toast-message';
+import { COLORS } from '../constants/theme';
 
 
 const client = new Client();
@@ -22,37 +22,56 @@ const databases = new Databases(client);
 const databaseId = '67ed81c5001ae04ea89c'; // Replace with your database ID
 const clubsCollectionId = '67ed89ff002561ee763d'; // Replace with your collection ID
 
+import { useFocusEffect } from '@react-navigation/native';
+
 const AdminAuthScreen = ({onAuthSuccess}) => {
   const [code, setCode] = useState('');
-
   const [clubs, setClubs] = useState([]);
-const [loading, setLoading] = useState(false);
- // State to manage loading state
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
+  // Fix: Reset loading and code state when screen is focused/unfocused to prevent blank/white screen
+  useFocusEffect(
+    React.useCallback(() => {
+      setLoading(false);
+      setCode('');
+      return () => {
+        setLoading(false);
+        setCode('');
+      };
+    }, [])
+  );
+
   useEffect(() => {
+    let isMounted = true;
     const fetchClubs = async () => {
       try {
+        setLoading(true);
         const response = await databases.listDocuments(
           databaseId,
           clubsCollectionId,
         );
-        setClubs(response.documents); // Store the list of clubs
+        if (isMounted) {
+          setClubs(response.documents); // Store the list of clubs
+        }
       } catch (error) {
-        // console.error('Error fetching clubs:', error);
         Toast.show({
           type: 'error',
           text1: 'Network Issue !!',
           text2: 'Please check Network Connection',
         });
-        // Alert.alert('Error', 'Failed to fetch club data.');
+      } finally {
+        if (isMounted) setLoading(false);
       }
     };
 
     fetchClubs();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const checkCode = () => {
+  const checkCode = async () => {
     if (!code.trim()) {
       Toast.show({
         type: 'error',
@@ -61,30 +80,36 @@ const [loading, setLoading] = useState(false);
           fontSize: 14,
         },
       });
-      // Alert.alert('Error', 'Please enter a code');
       return;
     }
 
-    const club = clubs.find(club => club.secretCode === code);
+    setLoading(true);
+    try {
+      const club = clubs.find(club => club.secretCode === code);
 
-    if (club) {
-      onAuthSuccess(true);
-      navigation.navigate('AdminPanel', {club: club.clubName});
-      Toast.show({
-        type: 'success',
-        text1: `✅ ${club.clubName}'s Panel !!`,
-        text1Style: {
-          fontSize: 14,
-        },
-      });
-    } else {
-      Toast.show({
-        type: 'error',
-        text1: '❌ Incorrect Admin Code !!',
-        text1Style: {
-          fontSize: 14,
-        },
-      });
+      if (club) {
+        onAuthSuccess(true);
+        setTimeout(() => {
+          navigation.navigate('AdminPanel', {club: club.clubName});
+        }, 100); // slight delay to ensure navigation stack is ready
+        Toast.show({
+          type: 'success',
+          text1: `✅ ${club.clubName}'s Panel !!`,
+          text1Style: {
+            fontSize: 14,
+          },
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: '❌ Incorrect Admin Code !!',
+          text1Style: {
+            fontSize: 14,
+          },
+        });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -104,95 +129,35 @@ const [loading, setLoading] = useState(false);
   };
 
   return (
-    <View style={styles.container}>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: 20,
-        }}>
-        <Text style={styles.label}>Enter Admin Code:</Text>
+    <View className="flex-1 justify-center items-center w-full bg-primary">
+      <View className="flex-1 justify-center items-center gap-5">
+        <Text className="text-textPrimary text-lg font-bold mb-2">Enter Admin Code:</Text>
         <TextInput
-          style={styles.input}
+          className="w-72 h-14 border-2 border-textPrimary rounded-xl px-4 text-textPrimary mb-3"
           placeholder="Enter Code"
+          placeholderTextColor={COLORS.textMuted}
           secureTextEntry
           value={code}
           onChangeText={setCode}
         />
-        <TouchableOpacity style={[styles.submitBtn,  loading && { opacity: 0.5 }]} 
-        onPress={checkCode}
-        disabled={loading} // Disable button while loading
+        <TouchableOpacity
+          className={`bg-buttonPrimary py-3 rounded-xl items-center w-32 ${loading ? 'opacity-50' : 'active:opacity-80'}`}
+          onPress={checkCode}
+          disabled={loading}
         >
-        <Text style={styles.submitTxt}>{loading ? 'Checking...': 'Submit'}</Text>
+          <Text className="font-bold text-base text-textOnAccent">{loading ? 'Checking...' : 'Submit'}</Text>
         </TouchableOpacity>
       </View>
       {/* credit section */}
-      <View style={styles.CreditContainer}>
-        <TouchableOpacity style={styles.credit} onPress={creditMsg}>
-          <View style={styles.credit}>
-            <Text style={styles.creditTxt}>Made with ❤️ By RAJ</Text>
+      <View className="flex-1 justify-end items-center">
+        <TouchableOpacity className="absolute bottom-12 items-center" onPress={creditMsg}>
+          <View className="items-center">
+            <Text className="text-textPrimary text-sm font-bold border border-textPrimary rounded-2xl px-6 py-1.5">Made with ❤️ By RAJ</Text>
           </View>
         </TouchableOpacity>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    backgroundColor: '#060318',
-    color: 'white',
-  },
-  CreditContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  label: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  input: {
-    width: 300,
-    height: 60,
-    borderWidth: 2,
-    padding: 10,
-    color: 'white',
-    borderColor: 'white',
-    borderRadius: 12,
-  },
-  submitBtn: {
-    backgroundColor: '#f9eed0',
-    padding: 10,
-    borderRadius: 12,
-    alignItems: 'center',
-    width: '120',
-  },
-  submitTxt: {
-    fontWeight: 'bold',
-    fontSize: 15,
-  },
-  credit: {
-    position: 'absolute',
-    bottom: 50,
-    alignItems: 'center',
-  },
-  creditTxt: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: 'bold',
-    borderWidth: 0.59,
-    borderColor: 'white',
-    borderRadius: 20,
-    paddingHorizontal: 22,
-    paddingVertical: 6,
-  },
-});
 
 export default AdminAuthScreen;

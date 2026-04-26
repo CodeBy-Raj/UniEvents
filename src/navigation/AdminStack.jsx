@@ -9,7 +9,7 @@ import EventDetailsScreen from '../screens/EventDetailsScreen';
 const Stack = createNativeStackNavigator();
 
 const AdminStack = ({ isAuthenticated, onAuth }) => (
-  <Stack.Navigator>
+  <Stack.Navigator screenOptions={{ contentStyle: { backgroundColor: '#060318' } }}>
     <Stack.Screen name="AdminAuth" options={{ headerShown: false }}>
       {props => (
         <AdminAuthScreen {...props} onAuthSuccess={() => onAuth(true)} />
